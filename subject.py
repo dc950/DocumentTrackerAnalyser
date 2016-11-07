@@ -1,5 +1,6 @@
 from pprint import pprint
 
+
 class Subject:
     def __init__(self, doc_id, doc_type):
         self.doc_id = doc_id
@@ -9,13 +10,11 @@ class Subject:
     def print_views_by_country(self):
         views_by_country = {}
         for item in self.views:
-            country = item['visitor_country']
+            country = item.visitor.country
             if country in views_by_country.keys():
                 views_by_country[country] += 1
             else:
                 views_by_country.update({country: 1})
-        print("Document: " + self.doc_id + "\nTotal views: " + str(len(self.views)))
-        pprint(views_by_country)
+        # print("Document: " + self.doc_id + "\nTotal views: " + str(len(self.views)))
+        return views_by_country
 
-    def add_view(self, new_view):
-        self.views.append(new_view)
