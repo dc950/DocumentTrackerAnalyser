@@ -40,3 +40,13 @@ class DataLoader:
         doc_view = DocumentView(visitor, subject, event_readtime, item["subject_page"])
         subject.views.append(doc_view)
         visitor.doc_views.append(doc_view)
+
+    def get_views_by_browser_global(self):
+        views_by_browser = {}
+        for visitor in self.visitors.values():
+            browser = visitor.user_agent.browser.family
+            if browser in views_by_browser.keys():
+                views_by_browser[browser] += 1
+            else:
+                views_by_browser.update({browser: 1})
+        return views_by_browser

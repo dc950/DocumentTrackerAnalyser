@@ -1,9 +1,7 @@
 from main import DataLoader
-import matplotlib.pyplot as plt
 import numpy as np
 import matplotlib
 from tkinter import Tk, Frame, BOTH, RAISED, RIGHT, LEFT, BOTTOM, TOP, Listbox, END
-from tkinter import ttk
 from tkinter.ttk import Style, Button, Label
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
 from matplotlib.figure import Figure
@@ -14,7 +12,6 @@ class GraphPage(Frame):
     def __init__(self, parent, controller):
         Frame.__init__(self, parent)
         self.controller = controller
-        self.document = None
         self.canvas = None
         label = Label(self, text="Graph Page!")
         label.pack(pady=10, padx=10)
@@ -24,17 +21,21 @@ class GraphPage(Frame):
         button1.pack()
 
     def show_document_data(self, document):
-        self.document = document
         if self.canvas is not None:
             self.canvas.get_tk_widget().destroy()
 
-        self.show_graph(document.get_views_by_country())
-        label = Label(self, text="By browser").pack(pady=10, padx=10)
-        self.show_graph(document.get_views_by_browser())
+        self.show_graph(document.get_views_by_country(), "Views by Country")
+        self.show_graph(document.get_views_by_browser(), "Views by Browser")
 
-    def show_graph(self, data):
+    def show_views_by_browser_global(self, data):
+        if self.canvas is not None:
+            self.canvas.get_tk_widget().destroy()
+        self.show_graph(data, "Global Browser Stats")
+
+    def show_graph(self, data, title):
         f = Figure(figsize=(5, 5), dpi=100)
         a = f.add_subplot(111)
+        f.suptitle(title, fontsize=14)
         width = 0.7
         x, y, labels = self.get_graph_data(data)
         print(labels)
@@ -48,7 +49,6 @@ class GraphPage(Frame):
 
     @staticmethod
     def get_graph_data(data):
-
         x = np.arange(1, len(data) + 1)
         labels, y = [], []
         for label, val in data.items():
@@ -70,9 +70,14 @@ class NavigationWindow(Frame):
     def setup_page(self):
         label = Label(self, text="Document Tracker Analyser")
         label.grid(column=0, row=0)
+        data = self.data.get_views_by_browser_global()
+        button = Button(self, text="Global browser stats",
+                        command=lambda: self.controller.show_graph_page_browser(data))
+        button.grid(column=1, row=0)
 
     def setup_buttons(self):
         docs = sorted(self.data.subjects.values(), key=lambda document: len(document.views), reverse=True)
+        # Setup documents
         for val, doc in enumerate(docs[:20], 1):
             text = doc.doc_id[:6] + "... "
             button = Button(self, text=text, width=20,
@@ -81,6 +86,12 @@ class NavigationWindow(Frame):
             label = Label(self, text=str(len(doc.views)) + " views")
             label.grid(column=1, row=val)
             self.active_buttons.append((button, label))
+        # Setup Readers
+        readers = sorted(self.data.visitors.values(), key=lambda reader: reader.total_view_time(), reverse=True)
+        for val, reader in enumerate(readers[:10], 1):
+            text = str(val) + ": " + reader.uuid[:6] + "..."
+            label = Label(self, text=text + " " + str(reader.total_view_time()) + " time viewed")
+            label.grid(column=3, row=val)
 
 
 class Controller(Tk):
@@ -109,18 +120,20 @@ class Controller(Tk):
         frame.tkraise()
         frame.show_document_data(document)
 
+    def show_graph_page_browser(self, data):
+        frame = self.frames[GraphPage]
+        frame.tkraise()
+        frame.show_views_by_browser_global(data)
+
     def show_frame(self, container):
         frame = self.frames[container]
         frame.tkraise()
 
 
 def main_function():
-
     app = Controller()
     app.mainloop()
 
 
 if __name__ == '__main__':
     main_function()
-
-# https://pythonprogramming.net/change-show-new-frame-tkinter/

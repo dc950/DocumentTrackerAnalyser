@@ -11,6 +11,13 @@ class Reader:
         self.country = country
         self.doc_views = []
 
+    def total_view_time(self):
+        total_time = 0
+        for view in self.doc_views:
+            if view.time_viewed is not None:
+                total_time += view.time_viewed
+        return total_time
+
 
 class Document:
     def __init__(self, doc_id, doc_type):
