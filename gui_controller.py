@@ -1,15 +1,11 @@
-from tkinter import Tk, Frame, BOTH, RAISED, RIGHT, LEFT
-from tkinter.ttk import Style, Button
 from main import DataLoader
-#from graph_drawer import GraphPage
 import matplotlib.pyplot as plt
 import numpy as np
 import matplotlib
-from tkinter import Tk, Frame, BOTH, RAISED, RIGHT, LEFT, BOTTOM, TOP
+from tkinter import Tk, Frame, BOTH, RAISED, RIGHT, LEFT, BOTTOM, TOP, Listbox, END
 from tkinter.ttk import Style, Button, Label
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
 from matplotlib.figure import Figure
-#from gui_controller import NavigationWindow
 matplotlib.use("TkAgg")
 
 
@@ -34,7 +30,6 @@ class GraphPage(Frame):
         toolbar.update()
         canvas._tkcanvas.pack(side=TOP, fill=BOTH, expand=True)
 
-
     def show_histogram(self, data):
         print(data)
         x = np.arange(1, len(data) + 1)
@@ -48,21 +43,22 @@ class GraphPage(Frame):
         plt.xticks(x + width / 2.0, labels)
         plt.show()
 
+
 class NavigationWindow(Frame):
     def __init__(self, parent, controller):
         Frame.__init__(self, parent, background="white")
         self.style = Style()
         self.parent = parent
-        self.data = DataLoader()
-        self.init_ui()
+        self.data = DataLoader(use_test_data=False)
+        self.setup_buttons()
         self.controller = controller
 
-    def init_ui(self):
-        self.parent.title("Simple")
-        self.style.theme_use("default")
-        self.pack(fill=BOTH, expand=True)
-        self.center_window()
-        self.setup_buttons()
+    # def init_ui(self):
+    #     self.parent.title("Simple")
+    #     self.style.theme_use("default")
+    #     self.pack(fill=BOTH, expand=True)
+    #     self.center_window()
+    #     self.setup_buttons()
 
     def center_window(self):
         width = 290
@@ -77,40 +73,46 @@ class NavigationWindow(Frame):
 
     def setup_buttons(self):
         docs = sorted(self.data.subjects.values(), key=lambda document: len(document.views), reverse=True)
-        for val, doc in enumerate(docs):
+        listbox = Listbox(self)
+        for val, doc in enumerate(docs[:20]):
             text = doc.doc_id[:6] + "... - " + str(len(doc.views))
             # button = Button(self, text=text, command=lambda x=doc: show_histogram(x.get_views_by_country()))
             button = Button(self, text=text, command=lambda: self.controller.show_frame(GraphPage))
-            button.grid(column=0, row=val)
+            # button.grid(column=0, row=val)
+            listbox.insert(END, button)
+        listbox.pack
 
-    class Controller(Tk):
 
-        def __init__(self, *args, **kwargs):
-            Tk.__init__(self, *args, **kwargs)
-            container = Frame(self)
+class Controller(Tk):
+    def __init__(self, *args, **kwargs):
+        Tk.__init__(self, *args, **kwargs)
+        Tk.wm_title(self, "Document Tracker Analyser")
 
-            container.pack(side="top", fill="both", expand=True)
+        container = Frame(self)
+        container.pack(side="top", fill="both", expand=True)
+        container.grid_rowconfigure(0, weight=1)
+        container.grid_columnconfigure(0, weight=1)
 
-            container.grid_rowconfigure(0, weight=1)
-            container.grid_columnconfigure(0, weight=1)
+        self.frames = {}
+        self.setup_pages(container)
 
-            self.frames = {}
+        self.show_frame(NavigationWindow)
 
-            for F in (NavigationWindow, GraphPage):
-                frame = F(container, self)
-                self.frames[F] = frame
-                frame.grid(row=0, column=0, sticky="nsew")
-            self.show_frame(NavigationWindow)
+    def setup_pages(self, container):
+        for F in (NavigationWindow, GraphPage):
+            frame = F(container, self)
+            self.frames[F] = frame
+            frame.grid(row=0, column=0, sticky="nsew")
 
-        def show_frame(self, cont):
-            frame = self.frames[cont]
-            frame.tkraise()
+    def show_frame(self, container):
+        frame = self.frames[container]
+        frame.tkraise()
 
 
 def main_function():
     root = Tk()
     root.geometry("250x150+300+300")
-    app = Controller(root)
+    app = Controller()
     root.mainloop()
 
 

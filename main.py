@@ -1,6 +1,5 @@
 import json
-from subject import Subject
-from visitor import Visitor, DocumentView
+from view_data import Reader, Document, DocumentView
 
 
 class DataLoader:
@@ -24,14 +23,14 @@ class DataLoader:
             return
         doc_id = item["subject_doc_id"]
         if doc_id not in self.subjects.keys():
-            subject = Subject(doc_id, item["subject_type"])
+            subject = Document(doc_id, item["subject_type"])
             self.subjects.update({doc_id: subject})
         else:
             subject = self.subjects[doc_id]
         visitor_id = item["visitor_uuid"]
         if visitor_id not in self.visitors.keys():
-            visitor = Visitor(item["visitor_username"] if "visitor_username" in item.keys() else None,
-                              visitor_id, item["visitor_source"], item["visitor_useragent"], item["visitor_country"])
+            visitor = Reader(item["visitor_username"] if "visitor_username" in item.keys() else None,
+                             visitor_id, item["visitor_source"], item["visitor_useragent"], item["visitor_country"])
             self.visitors.update({visitor_id: visitor})
         else:
             visitor = self.visitors[visitor_id]
