@@ -2,12 +2,13 @@ import user_agents
 
 
 class Reader:
-    def __init__(self, username, uuid, source, user_agent_string, country):
+    def __init__(self, username, uuid, source, user_agent, country):
         self.username = username
         self.uuid = uuid
         self.source = source
+        # Todo: should country and useragent be in view? do users view from different country and browser?
+        self.user_agent = user_agents.parse(user_agent)
         self.country = country
-        self.user_agent = user_agents.parse(user_agent_string)
         self.doc_views = []
 
 
@@ -18,15 +19,20 @@ class Document:
         self.views = []
 
     def get_views_by_country(self):
-        views_by_country = {}
-        print(len(self.views))
-        for item in self.views:
-            country = item.visitor.country
-            if country in views_by_country.keys():
-                views_by_country[country] += 1
+        return self.get_views_by_key(lambda view: view.visitor.country)
+
+    def get_views_by_browser(self):
+        return self.get_views_by_key(lambda view: view.visitor.user_agent.browser.family)
+
+    def get_views_by_key(self, key):
+        views_by_key = {}
+        for view in self.views:
+            item = key(view)
+            if item in views_by_key.keys():
+                views_by_key[item] += 1
             else:
-                views_by_country.update({country: 1})
-        return views_by_country
+                views_by_key.update({item: 1})
+        return views_by_key
 
 
 class DocumentView:
@@ -35,3 +41,5 @@ class DocumentView:
         self.document = document
         self.time_viewed = time_viewed
         self.page_viewed = page_viewed
+
+

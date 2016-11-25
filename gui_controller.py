@@ -14,53 +14,47 @@ class GraphPage(Frame):
     def __init__(self, parent, controller):
         Frame.__init__(self, parent)
         self.controller = controller
-
-
-    def show_graph(self, document):
         self.document = None
-
+        self.canvas = None
         label = Label(self, text="Graph Page!")
         label.pack(pady=10, padx=10)
 
         button1 = Button(self, text="Back to Home",
                          command=lambda: self.controller.show_frame(NavigationWindow))
         button1.pack()
+
+    def show_document_data(self, document):
+        self.document = document
+        if self.canvas is not None:
+            self.canvas.get_tk_widget().destroy()
+
+        self.show_graph(document.get_views_by_country())
+        label = Label(self, text="By browser").pack(pady=10, padx=10)
+        self.show_graph(document.get_views_by_browser())
+
+    def show_graph(self, data):
         f = Figure(figsize=(5, 5), dpi=100)
         a = f.add_subplot(111)
-        # a.plot([1, 2, 3, 4, 5, 6, 7, 8], [5, 6, 1, 3, 8, 9, 3, 5])
+        width = 0.7
+        x, y, labels = self.get_graph_data(data)
+        print(labels)
+        a.bar(x, y, width)
+        a.set_xticks(x + width / 2.0)
+        a.set_xticklabels(labels)
+        a.autoscale()
+        self.canvas = FigureCanvasTkAgg(f, self)
+        self.canvas.show()
+        self.canvas.get_tk_widget().pack(side=BOTTOM, fill=BOTH, expand=True)
 
-        data = document.data
-        width =
+    @staticmethod
+    def get_graph_data(data):
+
         x = np.arange(1, len(data) + 1)
         labels, y = [], []
         for label, val in data.items():
             labels.append(label)
             y.append(val)
-        a.bar(x, y, 1)
-        a.xticks(x + width / 2.0, labels)
-
-
-
-        canvas = FigureCanvasTkAgg(f, self)
-        canvas.show()
-        canvas.get_tk_widget().pack(side=BOTTOM, fill=BOTH, expand=True)
-
-        toolbar = NavigationToolbar2TkAgg(canvas, self)
-        toolbar.update()
-        canvas._tkcanvas.pack(side=TOP, fill=BOTH, expand=True)
-
-    def show_histogram(self, data):
-        print(data)
-        x = np.arange(1, len(data) + 1)
-        labels, y = [], []
-        for label, val in data.items():
-            labels.append(label)
-            y.append(val)
-
-        width = 0.9
-        plt.bar(x, y, 1)
-        plt.xticks(x + width / 2.0, labels)
-        plt.show()
+        return x, y, labels
 
 
 class NavigationWindow(Frame):
@@ -79,13 +73,10 @@ class NavigationWindow(Frame):
 
     def setup_buttons(self):
         docs = sorted(self.data.subjects.values(), key=lambda document: len(document.views), reverse=True)
-
         for val, doc in enumerate(docs[:20], 1):
             text = doc.doc_id[:6] + "... "
-            print(val)
-            # button = Button(self, text=text, command=lambda x=doc: show_histogram(x.get_views_by_country()))
             button = Button(self, text=text, width=20,
-                            command=lambda: self.controller.show_frame(GraphPage))
+                            command=lambda document=doc: self.controller.show_graph_page(document))
             button.grid(column=0, row=val)
             label = Label(self, text=str(len(doc.views)) + " views")
             label.grid(column=1, row=val)
@@ -115,8 +106,8 @@ class Controller(Tk):
 
     def show_graph_page(self, document):
         frame = self.frames[GraphPage]
-        frame.document = document
         frame.tkraise()
+        frame.show_document_data(document)
 
     def show_frame(self, container):
         frame = self.frames[container]

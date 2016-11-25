@@ -30,7 +30,6 @@ class GraphPage(Frame):
         toolbar.update()
         canvas._tkcanvas.pack(side=TOP, fill=BOTH, expand=True)
 
-
     def show_histogram(self, data):
         print(data)
         x = np.arange(1, len(data) + 1)
