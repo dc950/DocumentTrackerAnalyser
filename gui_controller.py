@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import matplotlib
 from tkinter import Tk, Frame, BOTH, RAISED, RIGHT, LEFT, BOTTOM, TOP, Listbox, END
+from tkinter import ttk
 from tkinter.ttk import Style, Button, Label
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
 from matplotlib.figure import Figure
@@ -12,15 +13,33 @@ matplotlib.use("TkAgg")
 class GraphPage(Frame):
     def __init__(self, parent, controller):
         Frame.__init__(self, parent)
+        self.controller = controller
+
+
+    def show_graph(self, document):
+        self.document = None
+
         label = Label(self, text="Graph Page!")
         label.pack(pady=10, padx=10)
 
         button1 = Button(self, text="Back to Home",
-                         command=lambda: controller.show_frame(NavigationWindow))
+                         command=lambda: self.controller.show_frame(NavigationWindow))
         button1.pack()
         f = Figure(figsize=(5, 5), dpi=100)
         a = f.add_subplot(111)
-        a.plot([1, 2, 3, 4, 5, 6, 7, 8], [5, 6, 1, 3, 8, 9, 3, 5])
+        # a.plot([1, 2, 3, 4, 5, 6, 7, 8], [5, 6, 1, 3, 8, 9, 3, 5])
+
+        data = document.data
+        width =
+        x = np.arange(1, len(data) + 1)
+        labels, y = [], []
+        for label, val in data.items():
+            labels.append(label)
+            y.append(val)
+        a.bar(x, y, 1)
+        a.xticks(x + width / 2.0, labels)
+
+
 
         canvas = FigureCanvasTkAgg(f, self)
         canvas.show()
@@ -47,47 +66,37 @@ class GraphPage(Frame):
 class NavigationWindow(Frame):
     def __init__(self, parent, controller):
         Frame.__init__(self, parent, background="white")
-        self.style = Style()
         self.parent = parent
         self.data = DataLoader(use_test_data=False)
-        self.setup_buttons()
         self.controller = controller
+        self.active_buttons = []
+        self.setup_page()
+        self.setup_buttons()
 
-    # def init_ui(self):
-    #     self.parent.title("Simple")
-    #     self.style.theme_use("default")
-    #     self.pack(fill=BOTH, expand=True)
-    #     self.center_window()
-    #     self.setup_buttons()
-
-    def center_window(self):
-        width = 290
-        height = 150
-
-        screen_width = self.parent.winfo_screenwidth()
-        screen_height = self.parent.winfo_screenheight()
-
-        x = (screen_width - width) / 2
-        y = (screen_height - height) / 2
-        self.parent.geometry('%dx%d+%d+%d' % (width, height, x, y))
+    def setup_page(self):
+        label = Label(self, text="Document Tracker Analyser")
+        label.grid(column=0, row=0)
 
     def setup_buttons(self):
         docs = sorted(self.data.subjects.values(), key=lambda document: len(document.views), reverse=True)
-        listbox = Listbox(self)
-        for val, doc in enumerate(docs[:20]):
-            text = doc.doc_id[:6] + "... - " + str(len(doc.views))
+
+        for val, doc in enumerate(docs[:20], 1):
+            text = doc.doc_id[:6] + "... "
+            print(val)
             # button = Button(self, text=text, command=lambda x=doc: show_histogram(x.get_views_by_country()))
-            button = Button(self, text=text, command=lambda: self.controller.show_frame(GraphPage))
-            # button.grid(column=0, row=val)
-            listbox.insert(END, button)
-        listbox.pack
+            button = Button(self, text=text, width=20,
+                            command=lambda: self.controller.show_frame(GraphPage))
+            button.grid(column=0, row=val)
+            label = Label(self, text=str(len(doc.views)) + " views")
+            label.grid(column=1, row=val)
+            self.active_buttons.append((button, label))
 
 
 class Controller(Tk):
     def __init__(self, *args, **kwargs):
         Tk.__init__(self, *args, **kwargs)
         Tk.wm_title(self, "Document Tracker Analyser")
-
+        self.style = Style()
         container = Frame(self)
         container.pack(side="top", fill="both", expand=True)
         container.grid_rowconfigure(0, weight=1)
@@ -104,16 +113,20 @@ class Controller(Tk):
             self.frames[F] = frame
             frame.grid(row=0, column=0, sticky="nsew")
 
+    def show_graph_page(self, document):
+        frame = self.frames[GraphPage]
+        frame.document = document
+        frame.tkraise()
+
     def show_frame(self, container):
         frame = self.frames[container]
         frame.tkraise()
 
 
 def main_function():
-    root = Tk()
-    root.geometry("250x150+300+300")
+
     app = Controller()
-    root.mainloop()
+    app.mainloop()
 
 
 if __name__ == '__main__':
