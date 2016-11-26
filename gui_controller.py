@@ -27,6 +27,14 @@ class GraphPage(Frame):
         self.show_graph(document.get_views_by_country(), "Views by Country")
         self.show_graph(document.get_views_by_browser(), "Views by Browser")
 
+        buttons = []
+        also_likes = document.also_likes()
+        for doc in also_likes:
+            button = Button(self, text=doc.doc_id[:6] + "...",
+                            command=lambda the_doc=doc: self.controller.show_graph_page(the_doc))
+            buttons.append(button)
+            button.pack()
+
     def show_views_by_browser_global(self, data):
         if self.canvas is not None:
             self.canvas.get_tk_widget().destroy()

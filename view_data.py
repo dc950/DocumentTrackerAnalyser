@@ -41,6 +41,19 @@ class Document:
                 views_by_key.update({item: 1})
         return views_by_key
 
+    def also_likes(self, amount=5):
+        readers = [view.visitor for view in self.views]
+        print(readers)
+        doc_views = {}
+        for reader in readers:
+            for view in reader.doc_views:
+                if view.document in doc_views.keys():
+                    doc_views[view.document] += 1
+                else:
+                    doc_views.update({view.document: 1})
+        top_docs = sorted(doc_views, key=lambda doc: doc_views[doc], reverse=True)[:amount]
+        return top_docs
+
 
 class DocumentView:
     def __init__(self, visitor, document, time_viewed, page_viewed):

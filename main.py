@@ -23,23 +23,23 @@ class DataLoader:
             return
         doc_id = item["subject_doc_id"]
         if doc_id not in self.subjects.keys():
-            subject = Document(doc_id, item["subject_type"])
-            self.subjects.update({doc_id: subject})
+            document = Document(doc_id, item["subject_type"])
+            self.subjects.update({doc_id: document})
         else:
-            subject = self.subjects[doc_id]
+            document = self.subjects[doc_id]
         visitor_id = item["visitor_uuid"]
         if visitor_id not in self.visitors.keys():
-            visitor = Reader(item["visitor_username"] if "visitor_username" in item.keys() else None,
-                             visitor_id, item["visitor_source"], item["visitor_useragent"], item["visitor_country"])
-            self.visitors.update({visitor_id: visitor})
+            reader = Reader(item["visitor_username"] if "visitor_username" in item.keys() else None,
+                            visitor_id, item["visitor_source"], item["visitor_useragent"], item["visitor_country"])
+            self.visitors.update({visitor_id: reader})
         else:
-            visitor = self.visitors[visitor_id]
+            reader = self.visitors[visitor_id]
         event_readtime = None
         if "event_readtime" in item.keys():
             event_readtime = item["event_readtime"]
-        doc_view = DocumentView(visitor, subject, event_readtime, item["subject_page"])
-        subject.views.append(doc_view)
-        visitor.doc_views.append(doc_view)
+        doc_view = DocumentView(reader, document, event_readtime, item["subject_page"])
+        document.views.append(doc_view)
+        reader.doc_views.append(doc_view)
 
     def get_views_by_browser_global(self):
         views_by_browser = {}
