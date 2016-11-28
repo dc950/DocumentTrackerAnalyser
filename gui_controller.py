@@ -95,7 +95,7 @@ class NavigationWindow(Frame):
             label.grid(column=1, row=val)
             self.active_buttons.append((button, label))
         # Setup Readers
-        readers = sorted(self.data.visitors.values(), key=lambda reader: reader.total_view_time(), reverse=True)
+        readers = sorted(self.data.visitors.values(), key=lambda r: r.total_view_time(), reverse=True)
         for val, reader in enumerate(readers[:10], 1):
             text = str(val) + ": " + reader.uuid[:6] + "..."
             label = Label(self, text=text + " " + str(reader.total_view_time()) + " time viewed")

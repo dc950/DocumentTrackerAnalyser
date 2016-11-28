@@ -1,0 +1,22 @@
+Fix the GUI:
+Fix gui-controller so completely new frame is made for each page
+Change layout of document page so graphs are shown in a grid
+
+Make fit Spec:
+Command line access to each tasks - some should not show gui (top readers)
+"Also likes" needs to not sort the output, but take in a sorting function
+
+Code improvements:
+Change some functions to properties
+
+Extra features:
+Text box entry for doc-views.
+
+Report:
+Introduction
+Requirements Checklist
+Design Considerations
+User Guides
+Developer Guide
+Testing
+Conclusions

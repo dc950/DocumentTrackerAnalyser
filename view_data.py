@@ -76,5 +76,3 @@ class DocumentView:
         self.document = document
         self.time_viewed = time_viewed
         self.page_viewed = page_viewed
-
-

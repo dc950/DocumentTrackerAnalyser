@@ -35,10 +35,10 @@ class StartPage(tk.Frame):
         label.pack(pady=10, padx=10)
 
         button1 = ttk.Button(self, text="Visit Page 1",
-                            command=lambda: controller.show_frame(PageOne))
+                             command=lambda: controller.show_frame(PageOne))
         button1.pack()
         button2 = ttk.Button(self, text="Visit Page 2",
-                            command=lambda: controller.show_frame(PageTwo))
+                             command=lambda: controller.show_frame(PageTwo))
         button2.pack()
 
 
@@ -49,7 +49,7 @@ class PageTwo(tk.Frame):
         label.pack(pady=10, padx=10)
 
         back = tk.Button(self, text="Back",
-                            command=lambda: controller.show_frame(StartPage))
+                         command=lambda: controller.show_frame(StartPage))
         back.pack()
 
 
@@ -60,7 +60,7 @@ class PageOne(tk.Frame):
         label.pack(pady=10, padx=10)
 
         back = tk.Button(self, text="Back",
-                            command=lambda: controller.show_frame(StartPage))
+                         command=lambda: controller.show_frame(StartPage))
         back.pack()
 
 
