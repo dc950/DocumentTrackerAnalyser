@@ -12,7 +12,7 @@ class GraphPage(Frame):
     def __init__(self, parent, controller):
         Frame.__init__(self, parent)
         self.controller = controller
-        self.canvas = None
+        self.page_items = []
         label = Label(self, text="Graph Page!")
         label.pack(pady=10, padx=10)
 
@@ -21,24 +21,20 @@ class GraphPage(Frame):
         button1.pack()
 
     def show_document_data(self, document):
-        if self.canvas is not None:
-            self.canvas.get_tk_widget().destroy()
-
+        self.clear_page()
         self.show_graph(document.get_views_by_country(), "Views by Country")
         self.show_graph(document.get_views_by_continent(), "Views by Continent")
         self.show_graph(document.get_views_by_browser(), "Views by Browser")
 
-        buttons = []
         also_likes = document.also_likes()
         for doc in also_likes:
             button = Button(self, text=doc.doc_id[:6] + "...",
                             command=lambda the_doc=doc: self.controller.show_graph_page(the_doc))
-            buttons.append(button)
+            self.page_items.append(button)
             button.pack()
 
     def show_views_by_browser_global(self, data):
-        if self.canvas is not None:
-            self.canvas.get_tk_widget().destroy()
+        self.clear_page()
         self.show_graph(data, "Global Browser Stats")
 
     def show_graph(self, data, title):
@@ -51,9 +47,10 @@ class GraphPage(Frame):
         a.set_xticks(x + width / 2.0)
         a.set_xticklabels(labels)
         a.autoscale()
-        self.canvas = FigureCanvasTkAgg(f, self)
-        self.canvas.show()
-        self.canvas.get_tk_widget().pack(side=BOTTOM, fill=BOTH, expand=True)
+        canvas = FigureCanvasTkAgg(f, self)
+        canvas.show()
+        canvas.get_tk_widget().pack(side=BOTTOM, fill=BOTH, expand=True)
+        self.page_items.append(canvas.get_tk_widget())
 
     @staticmethod
     def get_graph_data(data):
@@ -63,6 +60,10 @@ class GraphPage(Frame):
             labels.append(label)
             y.append(val)
         return x, y, labels
+
+    def clear_page(self):
+        for item in self.page_items:
+            item.pack_forget()
 
 
 class NavigationWindow(Frame):

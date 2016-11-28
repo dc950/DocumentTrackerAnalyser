@@ -13,7 +13,7 @@ class Reader:
         self.username = username
         self.uuid = uuid
         self.source = source
-        # Todo: should country and useragent be in view? do users view from different country and browser?
+        # Todo: should country and useragent be in view? do users view from different countries and browsers?
         self.user_agent = user_agents.parse(user_agent)
         self.country = country
         self.doc_views = []
@@ -39,7 +39,7 @@ class Document:
         self.views = []
 
     def get_views_by_country(self):
-        return self.get_views_by_key(lambda view: view.visitor.country)
+        return self.get_views_by_key(lambda view: view.visitor.country_name())
 
     def get_views_by_continent(self):
         return self.get_views_by_key(lambda view: view.visitor.continent_name())
