@@ -25,6 +25,7 @@ class GraphPage(Frame):
             self.canvas.get_tk_widget().destroy()
 
         self.show_graph(document.get_views_by_country(), "Views by Country")
+        self.show_graph(document.get_views_by_continent(), "Views by Continent")
         self.show_graph(document.get_views_by_browser(), "Views by Browser")
 
         buttons = []
@@ -46,7 +47,6 @@ class GraphPage(Frame):
         f.suptitle(title, fontsize=14)
         width = 0.7
         x, y, labels = self.get_graph_data(data)
-        print(labels)
         a.bar(x, y, width)
         a.set_xticks(x + width / 2.0)
         a.set_xticklabels(labels)

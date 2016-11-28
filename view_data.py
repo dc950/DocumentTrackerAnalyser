@@ -1,4 +1,11 @@
 import user_agents
+from countryinfo import countries
+
+country_dict = {}
+
+# Reorder countries into a dictionary for faster access
+for country_info in countries:
+    country_dict.update({country_info["code"]: country_info})
 
 
 class Reader:
@@ -18,6 +25,12 @@ class Reader:
                 total_time += view.time_viewed
         return total_time
 
+    def country_name(self):
+        return country_dict[self.country]["name"]
+
+    def continent_name(self):
+        return country_dict[self.country]["continent"]
+
 
 class Document:
     def __init__(self, doc_id, doc_type):
@@ -27,6 +40,9 @@ class Document:
 
     def get_views_by_country(self):
         return self.get_views_by_key(lambda view: view.visitor.country)
+
+    def get_views_by_continent(self):
+        return self.get_views_by_key(lambda view: view.visitor.continent_name())
 
     def get_views_by_browser(self):
         return self.get_views_by_key(lambda view: view.visitor.user_agent.browser.family)
@@ -43,7 +59,6 @@ class Document:
 
     def also_likes(self, amount=5):
         readers = [view.visitor for view in self.views]
-        print(readers)
         doc_views = {}
         for reader in readers:
             for view in reader.doc_views:
