@@ -8,6 +8,7 @@ Command line access to each tasks - some should not show gui (top readers)
 
 Code improvements:
 Change some functions to properties
+Breakdown decode_item()
 
 Extra features:
 Text box entry for doc-views.
