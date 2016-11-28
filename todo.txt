@@ -1,10 +1,10 @@
 Fix the GUI:
-Fix gui-controller so completely new frame is made for each page
-Change layout of document page so graphs are shown in a grid
+General gui tidying
 
 Make fit Spec:
 Command line access to each tasks - some should not show gui (top readers)
 "Also likes" needs to not sort the output, but take in a sorting function
+Reader page, showing recommendations
 
 Code improvements:
 Change some functions to properties

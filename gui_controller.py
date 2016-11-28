@@ -1,10 +1,15 @@
-from main import DataLoader
-import numpy as np
-import matplotlib
-from tkinter import Tk, Frame, BOTH, RAISED, RIGHT, LEFT, BOTTOM, TOP, Listbox, END
+import getopt
+import sys
+from tkinter import Tk, Frame, BOTH, LEFT, TOP
 from tkinter.ttk import Style, Button, Label
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
+
+import matplotlib
+import numpy as np
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
+
+from data_loader import DataLoader
+
 matplotlib.use("TkAgg")
 
 
@@ -15,27 +20,27 @@ class GraphPage(Frame):
         self.page_items = []
         label = Label(self, text="Graph Page!")
         label.pack(pady=10, padx=10)
-
         button1 = Button(self, text="Back to Home",
                          command=lambda: self.controller.show_frame(NavigationWindow))
         button1.pack()
 
-    def show_document_data(self, document):
+    def show_document_data(self, document, user=None):
         self.clear_page()
-        self.show_graph(document.get_views_by_country(), "Views by Country")
-        self.show_graph(document.get_views_by_continent(), "Views by Continent")
-        self.show_graph(document.get_views_by_browser(), "Views by Browser")
 
-        also_likes = document.also_likes()
+        also_likes = document.also_likes(user=user)
         for doc in also_likes:
             button = Button(self, text=doc.doc_id[:6] + "...",
                             command=lambda the_doc=doc: self.controller.show_graph_page(the_doc))
             self.page_items.append(button)
-            button.pack()
+            button.pack(side=TOP, pady=10, padx=10)
+
+        self.show_graph(document.get_views_by_country(), "Views by Country").pack(side=LEFT, fill=BOTH, expand=True)
+        self.show_graph(document.get_views_by_continent(), "Views by Continent").pack(side=LEFT, fill=BOTH, expand=True)
+        self.show_graph(document.get_views_by_browser(), "Views by Browser").pack(side=LEFT, fill=BOTH, expand=True)
 
     def show_views_by_browser_global(self, data):
         self.clear_page()
-        self.show_graph(data, "Global Browser Stats")
+        self.show_graph(data, "Global Browser Stats").pack(side=LEFT, fill=BOTH, expand=True, pady=10)
 
     def show_graph(self, data, title):
         f = Figure(figsize=(5, 5), dpi=100)
@@ -45,12 +50,13 @@ class GraphPage(Frame):
         x, y, labels = self.get_graph_data(data)
         a.bar(x, y, width)
         a.set_xticks(x + width / 2.0)
-        a.set_xticklabels(labels)
+        a.set_xticklabels(labels,  rotation=45)
         a.autoscale()
         canvas = FigureCanvasTkAgg(f, self)
         canvas.show()
-        canvas.get_tk_widget().pack(side=BOTTOM, fill=BOTH, expand=True)
+        # canvas.get_tk_widget().pack(side=BOTTOM, fill=BOTH, expand=True)
         self.page_items.append(canvas.get_tk_widget())
+        return canvas.get_tk_widget()
 
     @staticmethod
     def get_graph_data(data):
@@ -79,9 +85,9 @@ class NavigationWindow(Frame):
     def setup_page(self):
         label = Label(self, text="Document Tracker Analyser")
         label.grid(column=0, row=0)
-        data = self.data.get_views_by_browser_global()
+        # data = self.data.get_views_by_browser_global()
         button = Button(self, text="Global browser stats",
-                        command=lambda: self.controller.show_graph_page_browser(data))
+                        command=lambda: self.controller.show_graph_page_browser(self.data.get_views_by_browser_global()))
         button.grid(column=1, row=0)
 
     def setup_buttons(self):
@@ -124,10 +130,10 @@ class Controller(Tk):
             self.frames[F] = frame
             frame.grid(row=0, column=0, sticky="nsew")
 
-    def show_graph_page(self, document):
+    def show_graph_page(self, document, user=None):
         frame = self.frames[GraphPage]
         frame.tkraise()
-        frame.show_document_data(document)
+        frame.show_document_data(document, user=user)
 
     def show_graph_page_browser(self, data):
         frame = self.frames[GraphPage]
@@ -139,10 +145,71 @@ class Controller(Tk):
         frame.tkraise()
 
 
-def main_function():
+def start_gui():
     app = Controller()
     app.mainloop()
+    return app
 
+
+def main(argv):
+    try:
+        opts, args = getopt.getopt(argv, "u:d:t:")
+    except getopt.GetoptError:
+        print('Incorrect parameter specified')
+        sys.exit(2)
+    user_id, doc_id, task_id = None, None, 0
+    for opt, arg in opts:
+        if opt == '-u':
+            user_id = arg
+        elif opt == '-d':
+            doc_id = arg
+        elif opt == '-t':
+            task_id = int(arg)
+
+    if task_id == 0:
+        print("No task specified")
+        start_gui()
+    elif task_id == 1:
+        print("It was made in python.")
+    elif task_id == 2:
+        requires_error(doc_id is None, "No document id given")
+        app = start_gui()
+        app.show_graph_page(app.frames[NavigationWindow].data.documents[doc_id])  # TODO better access
+    elif task_id == 3:
+        app = start_gui()
+        app.show_graph_page_browser(app.frames[NavigationWindow].data.get_views_by_browser_global)
+    elif task_id == 4:
+        data = DataLoader()
+        readers = sorted(data.visitors.values(), key=lambda r: r.total_view_time(), reverse=True)
+        for val, reader in enumerate(readers[:10], 1):
+            print(str(val) + ": " + reader.uuid)
+        # start_gui()  # is shown on main page...
+    elif task_id == 5:
+        requires_error(doc_id is None, "No document id given")
+        data_loader = DataLoader()
+        data_loader.load_data(False)
+        doc = data_loader.subjects[doc_id]
+        if user_id is not None:
+            user = data_loader.visitors[user_id]
+        else:
+            user = None
+        also_likes = doc.also_likes(user=user)
+        if len(also_likes) == 0:
+            print("No other likes found")
+        for other_doc in also_likes:
+            print(also_likes)
+
+    elif task_id == 6:
+        start_gui()
+    elif task_id == 7:
+        print("The command-line works, see")
+
+
+def requires_error(condition, msg):
+    if condition:
+        print(msg)
+        sys.exit(2)
 
 if __name__ == '__main__':
-    main_function()
+    main(sys.argv[1:])
+

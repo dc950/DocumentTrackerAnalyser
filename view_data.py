@@ -1,11 +1,5 @@
-import user_agents
-from countryinfo import countries
-
-country_dict = {}
-
-# Reorder countries into a dictionary for faster access
-for country_info in countries:
-    country_dict.update({country_info["code"]: country_info})
+from ua_parser import user_agent_parser
+from countryinfo import country_to_cont, continents
 
 
 class Reader:
@@ -14,9 +8,16 @@ class Reader:
         self.uuid = uuid
         self.source = source
         # Todo: should country and useragent be in view? do users view from different countries and browsers?
-        self.user_agent = user_agents.parse(user_agent)
+        self.__user_agent_string = user_agent
+        self.__user_agent_cache = None
         self.country = country
         self.doc_views = []
+
+    @property
+    def user_agent(self):
+        if self.__user_agent_cache is None:
+            self.__user_agent_cache = user_agent_parser.ParseUserAgent(self.__user_agent_string)["family"]
+        return self.__user_agent_cache
 
     def total_view_time(self):
         total_time = 0
@@ -25,11 +26,8 @@ class Reader:
                 total_time += view.time_viewed
         return total_time
 
-    def country_name(self):
-        return country_dict[self.country]["name"]
-
     def continent_name(self):
-        return country_dict[self.country]["continent"]
+        return continents[country_to_cont[self.country]]
 
 
 class Document:
@@ -39,33 +37,38 @@ class Document:
         self.views = []
 
     def get_views_by_country(self):
-        return self.get_views_by_key(lambda view: view.visitor.country_name())
+        return self.get_views_by_key(lambda view: view.visitor.country)
 
     def get_views_by_continent(self):
         return self.get_views_by_key(lambda view: view.visitor.continent_name())
 
     def get_views_by_browser(self):
-        return self.get_views_by_key(lambda view: view.visitor.user_agent.browser.family)
+        return self.get_views_by_key(lambda view: view.visitor.user_agent)
 
     def get_views_by_key(self, key):
         views_by_key = {}
         for view in self.views:
             item = key(view)
-            if item in views_by_key.keys():
+            if item in views_by_key:
                 views_by_key[item] += 1
             else:
                 views_by_key.update({item: 1})
         return views_by_key
 
-    def also_likes(self, amount=5):
+    def also_likes(self, amount=5, user=None):
         readers = [view.visitor for view in self.views]
         doc_views = {}
         for reader in readers:
+            if user is reader:
+                continue
             for view in reader.doc_views:
-                if view.document in doc_views.keys():
-                    doc_views[view.document] += 1
+                document = view.document
+                if document is self:
+                    continue
+                if document in doc_views:
+                    doc_views[document] += 1
                 else:
-                    doc_views.update({view.document: 1})
+                    doc_views.update({document: 1})
         top_docs = sorted(doc_views, key=lambda doc: doc_views[doc], reverse=True)[:amount]
         return top_docs
 
