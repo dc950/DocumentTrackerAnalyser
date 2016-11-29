@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 import getopt
 import sys
 from data_loader import DataLoader
@@ -70,8 +71,10 @@ def task_5(sort, doc_id, user_id):
     also_likes = doc.also_likes(sort, user=user)
     if len(also_likes) == 0:
         print("No other likes found")
-    for liked_doc in also_likes:
-        print(liked_doc.doc_id)
+    else:
+        print("Other liked documents:")
+        for liked_doc in also_likes:
+            print(liked_doc.doc_id)
 
 
 def requires_error(condition, msg):

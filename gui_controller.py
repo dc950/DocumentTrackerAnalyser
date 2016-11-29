@@ -1,10 +1,13 @@
 from tkinter import Tk, Frame, BOTH, LEFT, TOP
 from tkinter.ttk import Style, Button, Label
+
 import matplotlib
 import numpy as np
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
+
 from data_loader import DataLoader
+
 matplotlib.use("TkAgg")
 
 
@@ -16,30 +19,47 @@ def sort_by_readtime(doc_views):
     return sorted(doc_views, key=lambda doc: doc_views[doc][1], reverse=True)
 
 
-class GraphPage(Frame):
+class HeaderFrame(Frame):
     def __init__(self, parent, controller):
         Frame.__init__(self, parent)
-        self.controller = controller
-        self.page_items = []
-
         button1 = Button(self, text="Back to Home",
-                         command=lambda: self.controller.show_frame(NavigationWindow))
-        button1.pack()
+                         command=lambda: controller.show_frame(NavigationWindow))
+        button1.pack(side=TOP)
+        self.controller = controller
+        self.buttons = []
 
-    def show_document_data(self, document, user=None):
-        self.clear_page()
+    def clear(self):
+        for button in self.buttons:
+            button.pack_forget()
+        self.buttons = []
 
-        label = Label(self, text="Document: "+document.doc_id)
-        label.pack(pady=10, padx=10)
-        self.page_items.append(label)
-        print(document.doc_id)
+    def display_also_likes(self, doc_id, also_likes):
+        self.clear()
 
-        also_likes = document.also_likes(sort_by_views, user=user)
+        label_header = Label(text="Document "+doc_id, font=("Helvetica", 16))
+        label_header.pack(side=TOP)
+        self.buttons.append(label_header)
+
         for i, doc in enumerate(also_likes):
             button = Button(self, text=doc.doc_id[:6] + "...",
                             command=lambda the_doc=doc: self.controller.show_graph_page(the_doc))
-            self.page_items.append(button)
-            button.pack()
+            self.buttons.append(button)
+            button.pack(side=LEFT)
+
+
+class GraphPage(Frame):
+    def __init__(self, parent, controller):
+        Frame.__init__(self, parent)
+
+        self.frame_header = HeaderFrame(self, controller)
+        self.frame_header.pack(side=TOP)
+        self.controller = controller
+        self.page_items = []
+
+    def show_document_data(self, document, user=None):
+        self.clear_page()
+        also_likes = document.also_likes(sort_by_views, user=user)
+        self.frame_header.display_also_likes(document.doc_id, also_likes)
 
         self.show_graph(document.get_views_by_country(), "Views by Country").pack(side=LEFT, fill=BOTH, expand=True)
         self.show_graph(document.get_views_by_continent(), "Views by Continent").pack(side=LEFT, fill=BOTH, expand=True)
@@ -47,17 +67,23 @@ class GraphPage(Frame):
 
     def show_views_by_browser_global(self, data):
         self.clear_page()
-        self.show_graph(data, "Global Browser Stats").pack(side=LEFT, fill=BOTH, expand=True, pady=10)
+        self.show_graph(data, "Global Browser Stats").pack(side=LEFT, fill=BOTH, expand=True)
 
     def show_graph(self, data, title):
         f = Figure(figsize=(5, 5), dpi=100)
+
         a = f.add_subplot(111)
         f.suptitle(title, fontsize=14)
         width = 0.7
         x, y, labels = self.get_graph_data(data)
         a.bar(x, y, width)
+        labels = list(labels)
         a.set_xticks(x + width / 2.0)
-        a.set_xticklabels(labels,  rotation=45)
+        if len(labels) > 5 and len(max(labels, key=lambda l: len(l))) > 2:
+            f.subplots_adjust(bottom=0.3)
+            a.set_xticklabels(labels, rotation=45, ha='right')
+        else:
+            a.set_xticklabels(labels)
         a.autoscale()
         canvas = FigureCanvasTkAgg(f, self)
         canvas.show()
