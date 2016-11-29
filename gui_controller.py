@@ -1,15 +1,10 @@
-import getopt
-import sys
 from tkinter import Tk, Frame, BOTH, LEFT, TOP
 from tkinter.ttk import Style, Button, Label
-
 import matplotlib
 import numpy as np
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
-
 from data_loader import DataLoader
-
 matplotlib.use("TkAgg")
 
 
@@ -40,11 +35,11 @@ class GraphPage(Frame):
         print(document.doc_id)
 
         also_likes = document.also_likes(sort_by_views, user=user)
-        for doc in also_likes:
+        for i, doc in enumerate(also_likes):
             button = Button(self, text=doc.doc_id[:6] + "...",
                             command=lambda the_doc=doc: self.controller.show_graph_page(the_doc))
             self.page_items.append(button)
-            button.pack(side=TOP, pady=10, padx=10)
+            button.pack()
 
         self.show_graph(document.get_views_by_country(), "Views by Country").pack(side=LEFT, fill=BOTH, expand=True)
         self.show_graph(document.get_views_by_continent(), "Views by Continent").pack(side=LEFT, fill=BOTH, expand=True)
@@ -136,8 +131,6 @@ class Controller(Tk):
 
         self.show_frame(NavigationWindow)
 
-        # TODO enum?
-        # TODO try catch doc_id
         if task == '2':
             self.show_graph_page(self.data.documents[doc_id])
         elif task == '3a':
@@ -168,70 +161,4 @@ class Controller(Tk):
         frame = self.frames[container]
         frame.tkraise()
 
-
-def start_gui(task=None, doc_id=None):
-    app = Controller(task=task, doc_id=doc_id)
-    app.mainloop()
-    return app
-
-
-# TODO move
-def main(argv):
-    try:
-        opts, args = getopt.getopt(argv, "u:d:t:")
-    except getopt.GetoptError:
-        print('Incorrect parameters specified')
-        sys.exit(2)
-    user_id, doc_id, task_id = None, None, 0
-    for opt, arg in opts:
-        if opt == '-u':
-            user_id = arg
-        elif opt == '-d':
-            doc_id = arg
-        elif opt == '-t':
-            task_id = arg
-
-    if task_id == '2a' or task_id == '2b' or task_id == '2':
-        print(task_id)
-        requires_error(doc_id is None, "No document id given")
-        start_gui(task='2', doc_id=doc_id)
-    elif task_id == '3a':
-        start_gui(task=task_id)
-    elif task_id == '3b':
-        start_gui(task=task_id)
-    elif task_id == '4':
-        data = DataLoader()
-        readers = sorted(data.visitors.values(), key=lambda r: r.total_view_time(), reverse=True)
-        for val, reader in enumerate(readers[:10], 1):
-            print(str(val) + ": " + reader.uuid)
-    elif task_id == '5a':
-        task_5(sort_by_views, doc_id, user_id)
-    elif task_id == '5b':
-        task_5(sort_by_readtime, doc_id, user_id)
-    else:
-        start_gui()
-
-
-def task_5(sort, doc_id, user_id):
-    requires_error(doc_id is None, "No document id given")
-    data_loader = DataLoader()
-    doc = data_loader.documents[doc_id]
-    if user_id is not None:
-        user = data_loader.visitors[user_id]
-    else:
-        user = None
-    also_likes = doc.also_likes(sort, user=user)
-    if len(also_likes) == 0:
-        print("No other likes found")
-    for liked_doc in also_likes:
-        print(liked_doc.doc_id)
-
-
-def requires_error(condition, msg):
-    if condition:
-        print(msg)
-        sys.exit(2)
-
-if __name__ == '__main__':
-    main(sys.argv[1:])
 

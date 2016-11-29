@@ -1,18 +1,12 @@
 Fix the GUI:
 General gui tidying
 
-Make fit Spec:
-Command line access to each tasks - some should not show gui (top readers)
-"Also likes" needs to not sort the output, but take in a sorting function
-Reader page, showing recommendations
-
 Code improvements:
 Change some functions to properties
-Breakdown decode_item()
 lots of try, catches
 override repr, string etc in classes
 
-Extra features:
+Needed features:
 Text box entry for doc-views.
 
 Report:
