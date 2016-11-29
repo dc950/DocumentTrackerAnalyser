@@ -8,7 +8,7 @@ class Reader:
         self.uuid = uuid
         self.source = source
         # Todo: should country and useragent be in view? do users view from different countries and browsers?
-        self.__user_agent_string = user_agent
+        self.user_agent_string = user_agent
         self.__user_agent_cache = None
         self.country = country
         self.doc_views = []
@@ -16,7 +16,7 @@ class Reader:
     @property
     def user_agent(self):
         if self.__user_agent_cache is None:
-            self.__user_agent_cache = user_agent_parser.ParseUserAgent(self.__user_agent_string)["family"]
+            self.__user_agent_cache = user_agent_parser.ParseUserAgent(self.user_agent_string)["family"]
         return self.__user_agent_cache
 
     def total_view_time(self):
@@ -35,6 +35,9 @@ class Document:
         self.doc_id = doc_id
         self.doc_type = doc_type
         self.views = []
+
+    def __repr__(self):
+        return "<Document " + self.doc_id + ">"
 
     def get_views_by_country(self):
         return self.get_views_by_key(lambda view: view.visitor.country)
@@ -55,21 +58,20 @@ class Document:
                 views_by_key.update({item: 1})
         return views_by_key
 
-    def also_likes(self, amount=5, user=None):
-        readers = [view.visitor for view in self.views]
+    def also_likes(self, sort, amount=10, user=None):
+        readers = (view.visitor for view in self.views if view.visitor != user)
         doc_views = {}
         for reader in readers:
-            if user is reader:
-                continue
             for view in reader.doc_views:
                 document = view.document
                 if document is self:
                     continue
                 if document in doc_views:
-                    doc_views[document] += 1
+                    doc_views[document][0] += 1
+                    doc_views[document][1] += view.time_viewed or 0
                 else:
-                    doc_views.update({document: 1})
-        top_docs = sorted(doc_views, key=lambda doc: doc_views[doc], reverse=True)[:amount]
+                    doc_views.update({document: [1, view.time_viewed or 0]})
+        top_docs = sort(doc_views)[:amount]
         return top_docs
 
 

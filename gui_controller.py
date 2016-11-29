@@ -13,13 +13,20 @@ from data_loader import DataLoader
 matplotlib.use("TkAgg")
 
 
+def sort_by_views(doc_views):
+    return sorted(doc_views, key=lambda doc: doc_views[doc][0], reverse=True)
+
+
+def sort_by_readtime(doc_views):
+    return sorted(doc_views, key=lambda doc: doc_views[doc][1], reverse=True)
+
+
 class GraphPage(Frame):
     def __init__(self, parent, controller):
         Frame.__init__(self, parent)
         self.controller = controller
         self.page_items = []
-        label = Label(self, text="Graph Page!")
-        label.pack(pady=10, padx=10)
+
         button1 = Button(self, text="Back to Home",
                          command=lambda: self.controller.show_frame(NavigationWindow))
         button1.pack()
@@ -27,7 +34,12 @@ class GraphPage(Frame):
     def show_document_data(self, document, user=None):
         self.clear_page()
 
-        also_likes = document.also_likes(user=user)
+        label = Label(self, text="Document: "+document.doc_id)
+        label.pack(pady=10, padx=10)
+        self.page_items.append(label)
+        print(document.doc_id)
+
+        also_likes = document.also_likes(sort_by_views, user=user)
         for doc in also_likes:
             button = Button(self, text=doc.doc_id[:6] + "...",
                             command=lambda the_doc=doc: self.controller.show_graph_page(the_doc))
@@ -54,7 +66,6 @@ class GraphPage(Frame):
         a.autoscale()
         canvas = FigureCanvasTkAgg(f, self)
         canvas.show()
-        # canvas.get_tk_widget().pack(side=BOTTOM, fill=BOTH, expand=True)
         self.page_items.append(canvas.get_tk_widget())
         return canvas.get_tk_widget()
 
@@ -73,25 +84,25 @@ class GraphPage(Frame):
 
 
 class NavigationWindow(Frame):
-    def __init__(self, parent, controller):
+    def __init__(self, parent, controller, data):
         Frame.__init__(self, parent, background="white")
         self.parent = parent
-        self.data = DataLoader(use_test_data=False)
+
         self.controller = controller
         self.active_buttons = []
-        self.setup_page()
-        self.setup_buttons()
+        self.setup_page(data)
+        self.setup_buttons(data)
 
-    def setup_page(self):
+    def setup_page(self, data):
         label = Label(self, text="Document Tracker Analyser")
         label.grid(column=0, row=0)
         # data = self.data.get_views_by_browser_global()
         button = Button(self, text="Global browser stats",
-                        command=lambda: self.controller.show_graph_page_browser(self.data.get_views_by_browser_global()))
+                        command=lambda: self.controller.show_graph_page_browser(data.get_views_by_browser_global()))
         button.grid(column=1, row=0)
 
-    def setup_buttons(self):
-        docs = sorted(self.data.subjects.values(), key=lambda document: len(document.views), reverse=True)
+    def setup_buttons(self, data):
+        docs = sorted(data.documents.values(), key=lambda document: len(document.views), reverse=True)
         # Setup documents
         for val, doc in enumerate(docs[:20], 1):
             text = doc.doc_id[:6] + "... "
@@ -102,7 +113,7 @@ class NavigationWindow(Frame):
             label.grid(column=1, row=val)
             self.active_buttons.append((button, label))
         # Setup Readers
-        readers = sorted(self.data.visitors.values(), key=lambda r: r.total_view_time(), reverse=True)
+        readers = sorted(data.visitors.values(), key=lambda r: r.total_view_time(), reverse=True)
         for val, reader in enumerate(readers[:10], 1):
             text = str(val) + ": " + reader.uuid[:6] + "..."
             label = Label(self, text=text + " " + str(reader.total_view_time()) + " time viewed")
@@ -110,10 +121,11 @@ class NavigationWindow(Frame):
 
 
 class Controller(Tk):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, task=None, doc_id=None, user_id=None, *args, **kwargs):
         Tk.__init__(self, *args, **kwargs)
         Tk.wm_title(self, "Document Tracker Analyser")
         self.style = Style()
+        self.data = DataLoader(use_test_data=False)
         container = Frame(self)
         container.pack(side="top", fill="both", expand=True)
         container.grid_rowconfigure(0, weight=1)
@@ -124,11 +136,23 @@ class Controller(Tk):
 
         self.show_frame(NavigationWindow)
 
+        # TODO enum?
+        # TODO try catch doc_id
+        if task == '2':
+            self.show_graph_page(self.data.documents[doc_id])
+        elif task == '3a':
+            self.show_graph_page_browser(self.data.get_views_by_browser_global_base())
+        elif task == '3b':
+            self.show_graph_page_browser(self.data.get_views_by_browser_global())
+
     def setup_pages(self, container):
-        for F in (NavigationWindow, GraphPage):
-            frame = F(container, self)
-            self.frames[F] = frame
-            frame.grid(row=0, column=0, sticky="nsew")
+        frame = NavigationWindow(container, self, self.data)
+        self.frames[NavigationWindow] = frame
+        frame.grid(row=0, column=0, sticky="nsew")
+
+        frame = GraphPage(container, self)
+        self.frames[GraphPage] = frame
+        frame.grid(row=0, column=0, sticky="nsew")
 
     def show_graph_page(self, document, user=None):
         frame = self.frames[GraphPage]
@@ -145,17 +169,18 @@ class Controller(Tk):
         frame.tkraise()
 
 
-def start_gui():
-    app = Controller()
+def start_gui(task=None, doc_id=None):
+    app = Controller(task=task, doc_id=doc_id)
     app.mainloop()
     return app
 
 
+# TODO move
 def main(argv):
     try:
         opts, args = getopt.getopt(argv, "u:d:t:")
     except getopt.GetoptError:
-        print('Incorrect parameter specified')
+        print('Incorrect parameters specified')
         sys.exit(2)
     user_id, doc_id, task_id = None, None, 0
     for opt, arg in opts:
@@ -164,45 +189,42 @@ def main(argv):
         elif opt == '-d':
             doc_id = arg
         elif opt == '-t':
-            task_id = int(arg)
+            task_id = arg
 
-    if task_id == 0:
-        print("No task specified")
-        start_gui()
-    elif task_id == 1:
-        print("It was made in python.")
-    elif task_id == 2:
+    if task_id == '2a' or task_id == '2b' or task_id == '2':
+        print(task_id)
         requires_error(doc_id is None, "No document id given")
-        app = start_gui()
-        app.show_graph_page(app.frames[NavigationWindow].data.documents[doc_id])  # TODO better access
-    elif task_id == 3:
-        app = start_gui()
-        app.show_graph_page_browser(app.frames[NavigationWindow].data.get_views_by_browser_global)
-    elif task_id == 4:
+        start_gui(task='2', doc_id=doc_id)
+    elif task_id == '3a':
+        start_gui(task=task_id)
+    elif task_id == '3b':
+        start_gui(task=task_id)
+    elif task_id == '4':
         data = DataLoader()
         readers = sorted(data.visitors.values(), key=lambda r: r.total_view_time(), reverse=True)
         for val, reader in enumerate(readers[:10], 1):
             print(str(val) + ": " + reader.uuid)
-        # start_gui()  # is shown on main page...
-    elif task_id == 5:
-        requires_error(doc_id is None, "No document id given")
-        data_loader = DataLoader()
-        data_loader.load_data(False)
-        doc = data_loader.subjects[doc_id]
-        if user_id is not None:
-            user = data_loader.visitors[user_id]
-        else:
-            user = None
-        also_likes = doc.also_likes(user=user)
-        if len(also_likes) == 0:
-            print("No other likes found")
-        for other_doc in also_likes:
-            print(also_likes)
-
-    elif task_id == 6:
+    elif task_id == '5a':
+        task_5(sort_by_views, doc_id, user_id)
+    elif task_id == '5b':
+        task_5(sort_by_readtime, doc_id, user_id)
+    else:
         start_gui()
-    elif task_id == 7:
-        print("The command-line works, see")
+
+
+def task_5(sort, doc_id, user_id):
+    requires_error(doc_id is None, "No document id given")
+    data_loader = DataLoader()
+    doc = data_loader.documents[doc_id]
+    if user_id is not None:
+        user = data_loader.visitors[user_id]
+    else:
+        user = None
+    also_likes = doc.also_likes(sort, user=user)
+    if len(also_likes) == 0:
+        print("No other likes found")
+    for liked_doc in also_likes:
+        print(liked_doc.doc_id)
 
 
 def requires_error(condition, msg):

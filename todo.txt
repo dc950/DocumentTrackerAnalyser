@@ -10,6 +10,7 @@ Code improvements:
 Change some functions to properties
 Breakdown decode_item()
 lots of try, catches
+override repr, string etc in classes
 
 Extra features:
 Text box entry for doc-views.

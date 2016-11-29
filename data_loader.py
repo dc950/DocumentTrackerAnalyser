@@ -4,11 +4,11 @@ from view_data import Reader, Document, DocumentView
 
 class DataLoader:
     def __init__(self, use_test_data=False):
-        self.subjects = {}
+        self.documents = {}
         self.visitors = {}
-        self.load_data(use_test_data)
+        self.__load_data(use_test_data)
 
-    def load_data(self, use_test_data):
+    def __load_data(self, use_test_data):
         json_data = []
         data_file_name = 'json_data/issuu_sample.json' if use_test_data else 'json_data/issuu_cw2.json' #'json_data/sample_100k_lines.json'
         with open(data_file_name) as f:
@@ -24,11 +24,11 @@ class DataLoader:
         if item["event_type"] != "read" and item["event_type"] != "pagereadtime":
             return
         doc_id = item["subject_doc_id"]
-        if doc_id not in self.subjects:
+        if doc_id not in self.documents:
             document = Document(doc_id, item["subject_type"])
-            self.subjects.update({doc_id: document})
+            self.documents.update({doc_id: document})
         else:
-            document = self.subjects[doc_id]
+            document = self.documents[doc_id]
         visitor_id = item["visitor_uuid"]
         if visitor_id not in self.visitors:
             reader = Reader(item["visitor_username"] if "visitor_username" in item else None,
@@ -43,12 +43,18 @@ class DataLoader:
         document.views.append(doc_view)
         reader.doc_views.append(doc_view)
 
+    def get_views_by_browser_global_base(self):
+        return self.get_visitor_global_data(lambda x: x.user_agent_string)
+
     def get_views_by_browser_global(self):
-        views_by_browser = {}
+        return self.get_visitor_global_data(lambda x: x.user_agent)
+
+    def get_visitor_global_data(self, key):
+        global_data = {}
         for visitor in self.visitors.values():
-            browser = visitor.user_agent
-            if browser in views_by_browser:
-                views_by_browser[browser] += 1
+            item = key(visitor)
+            if item in global_data:
+                global_data[item] += 1
             else:
-                views_by_browser.update({browser: 1})
-        return views_by_browser
+                global_data.update({item: 1})
+        return global_data
