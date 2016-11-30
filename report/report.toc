@@ -25,7 +25,7 @@
 \contentsline {section}{\numberline {3.3}GUI Design}{7}{section.3.3}
 \contentsline {section}{\numberline {3.4}Command Line Management}{7}{section.3.4}
 \contentsline {section}{\numberline {3.5}Use of Advanced Language Features}{7}{section.3.5}
-\contentsline {subsection}{\numberline {3.5.1}Lambda Expressions}{7}{subsection.3.5.1}
+\contentsline {subsection}{\numberline {3.5.1}Lambda Expressions}{8}{subsection.3.5.1}
 \contentsline {subsection}{\numberline {3.5.2}Generators}{8}{subsection.3.5.2}
 \contentsline {subsection}{\numberline {3.5.3}Iterators}{8}{subsection.3.5.3}
 \contentsline {subsection}{\numberline {3.5.4}Advanced In-Line Functionality}{8}{subsection.3.5.4}

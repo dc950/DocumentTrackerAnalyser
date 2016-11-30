@@ -100,9 +100,10 @@ The main function of the Controller is to control the GUI pages, including makin
 The NavigationPage will perform all of its functionality when it is initialised.  It will create the required labels and buttons, which have their commands specified using lambda expressions.
 
 \subsection{GraphPage}
-
+The GraphPage controls the page on which the histograms are displayed.  Each time this page is loaded, all of the items on it are cleared and the new items are created and added.
 
 \subsection{HeaderFrame}
+
 
 \section{GUI Design}
 
@@ -127,7 +128,7 @@ One thing is variable naming.  I made sure that all of my variable names were sm
 
 Another important aspect was appropriately defining functions.  I tried to keep my functions both smartly named and small.  This helps keep functions stick to the single responsibility principal and makes it easier to read:  its hard for a programmer to understand what is going on if they look at a long stream of code; breaking these up into functions make it clear what each part is doing.
 
-I also made appropriate use of comments, by using them sparingly and only when my code fails to simply describe itself.  Normally, good variable and function names can eliminate the use of most comments
+I also made appropriate use of comments, by using them sparingly and only when my code fails to simply describe itself.  Normally, good variable and function names can eliminate the need for lots of comments.
 % Example of when i did use some.  Talk about doc strings.
 
 
@@ -147,39 +148,39 @@ To view data on the global browser views, click the "global browser views" butto
 \subsection{General Usage}
 The command line parameters will either display the required information or launch the program and navigate to the appropriate screen.  For general usage, launching the command line can be used as follows:
 \begin{lstlisting}
-./cw2 -t task_id -d doc_uuid -u user_uuid
+./cw2 -t task_id -d doc_uuid -u user_uuid -f file_name
 \end{lstlisting}
 \subsection{Views by Country and Continent}
 To see the views by country and continent for a specific document use the following command where \lstinline{<doc_id>} is a document UUID:
 \begin{lstlisting}
-./cw2 -t 2 -d <doc_id>
+./cw2 -t 2 -d <doc_id> -f data.json
 \end{lstlisting}
 \subsection{Global Browser Statistics}
 To view the global browser statistics for each individual user-agent use the following command:
 \begin{lstlisting}
-./cw2 -t 3a
+./cw2 -t 3a -f data.json
 \end{lstlisting}
 To view the global browser statistics for each browser family use the following command:
 \begin{lstlisting}
-./cw2 -t 3b
+./cw2 -t 3b -f data.json
 \end{lstlisting}
 \subsection{Readership Profile}
 To see the readership profile of the top 10 readers use the following command:
 \begin{lstlisting}
-./cw2 -t 4
+./cw2 -t 4 -f data.json
 \end{lstlisting}
 \subsection{Also likes Functionality}
 The also likes functionality can be used for two different sorting methods (by number of views and by the readership profile). To sort by readership profile, where \lstinline{<doc_id>} is a document UUID, enter:
 \begin{lstlisting}
-./cw2 -t 5d -d <doc_id>
+./cw2 -t 5d -d <doc_id> -f data.json
 \end{lstlisting}
 For sorting by number of readers of the same document enter:
 \begin{lstlisting}
-./cw2 -t 5e -d <doc_id>
+./cw2 -t 5e -d <doc_id> -f data.json
 \end{lstlisting}
 The also likes functionality is also able to accept a user.  For example, the following would sort by number of viewers where \lstinline{<user_id>} is a visitor UUID:
 \begin{lstlisting}
-./cw2 -t 5e -d <doc_id> -u <user_id>
+./cw2 -t 5e -d <doc_id> -u <user_id> -f data.json
 \end{lstlisting}
 
 \chapter{Developer Guide}
@@ -198,9 +199,9 @@ cw2 is the main file for launching the application.  It handles parameter inputs
 \section{Countryinfo}
 The countryinfo file simply contains two dictionaries - one linking country code to continent codes and one linking continent codes to continent names.
 \section{Data Loader}
-The data\_loader file manages the data 
+The data\_loader file manages the loading of the data.  All of its functionality is contained within the DataLoader class.  The constructor takes in a filename which it will open and read.  The data will then be converted into the data structures that the program (in view_data\ref{viewdata).}
 \section{Gui Controller}
-\section{View Data}
+\section{View Data}\label{viewdata}
 
 \chapter{Testing}
 

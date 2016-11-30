@@ -6,25 +6,26 @@ from gui_controller import Controller
 from gui_controller import sort_by_readtime, sort_by_views
 
 
-def start_gui(task=None, doc_id=None):
-    app = Controller(task=task, doc_id=doc_id)
+def start_gui(file_name, task=None, doc_id=None):
+    app = Controller(file_name, task=task, doc_id=doc_id)
     app.mainloop()
     return app
 
 
 def main():
     argv = (sys.argv[1:])
-    doc_id, task_id, user_id = get_args(argv)
-    run_task(doc_id, task_id, user_id)
+    doc_id, task_id, user_id, file_name = get_args(argv)
+    requires_error(file_name is None, "No file given (-f)")
+    run_task(doc_id, task_id, user_id, file_name)
 
 
 def get_args(argv):
     try:
-        opts, args = getopt.getopt(argv, "u:d:t:")
+        opts, args = getopt.getopt(argv, "u:d:t:f:")
     except getopt.GetoptError:
         print('Incorrect parameters specified')
         sys.exit(2)
-    user_id, doc_id, task_id = None, None, 0
+    user_id, doc_id, file_name, task_id = None, None, None, None
     for opt, arg in opts:
         if opt == '-u':
             user_id = arg
@@ -32,37 +33,39 @@ def get_args(argv):
             doc_id = arg
         elif opt == '-t':
             task_id = arg
-    return doc_id, task_id, user_id
+        elif opt == '-f':
+            file_name = arg
+    return doc_id, task_id, user_id, file_name
 
 
-def run_task(doc_id, task_id, user_id):
+def run_task(doc_id, task_id, user_id, file_name):
     if task_id == '2a' or task_id == '2b' or task_id == '2':
         requires_error(doc_id is None, "No document id given")
-        start_gui(task='2', doc_id=doc_id)
+        start_gui(file_name, task='2', doc_id=doc_id)
     elif task_id == '3a':
-        start_gui(task=task_id)
+        start_gui(file_name, task=task_id)
     elif task_id == '3b':
-        start_gui(task=task_id)
+        start_gui(file_name, task=task_id)
     elif task_id == '4':
-        task_4()
+        task_4(file_name)
     elif task_id == '5a':
-        task_5(sort_by_views, doc_id, user_id)
+        task_5(file_name, sort_by_views, doc_id, user_id)
     elif task_id == '5b':
-        task_5(sort_by_readtime, doc_id, user_id)
+        task_5(file_name, sort_by_readtime, doc_id, user_id)
     else:
-        start_gui()
+        start_gui(file_name)
 
 
-def task_4():
-    data = DataLoader(only_reads=False)
+def task_4(file_name):
+    data = DataLoader(file_name, only_reads=False)
     readers = sorted(data.visitors.values(), key=lambda r: r.total_view_time(), reverse=True)
-    for val, reader in enumerate(readers[:10], 1):
-        print(str(val) + ": " + reader.uuid)
+    for i, reader in enumerate(readers[:10], 1):
+        print(str(i) + ": (" + reader.uuid + ", " + str(reader.total_view_time()) + ")")
 
 
-def task_5(sort, doc_id, user_id):
+def task_5(file_name, sort, doc_id, user_id):
     requires_error(doc_id is None, "No document id given")
-    data_loader = DataLoader()
+    data_loader = DataLoader(file_name)
     doc = data_loader.documents[doc_id]
     if user_id is not None:
         user = data_loader.visitors[user_id]

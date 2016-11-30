@@ -1,10 +1,13 @@
-from tkinter import Tk, Frame, BOTH, LEFT, TOP, BOTTOM
+from tkinter import Tk, Frame, BOTH, LEFT, TOP
 from tkinter.ttk import Style, Button, Label
+
 import matplotlib
 import numpy as np
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
+
 from data_loader import DataLoader
+
 matplotlib.use("TkAgg")
 
 
@@ -67,22 +70,21 @@ class GraphPage(Frame):
         self.show_graph(data, "Global Browser Stats").pack(side=LEFT, fill=BOTH, expand=True)
 
     def show_graph(self, data, title):
-        f = Figure(figsize=(5, 5), dpi=100)
-
-        a = f.add_subplot(111)
-        f.suptitle(title, fontsize=14)
+        figure = Figure(figsize=(5, 5), dpi=100)
+        sub_plot = figure.add_subplot(111)
+        figure.suptitle(title, fontsize=14)
         width = 0.7
-        x, y, labels = self.get_graph_data(data)
-        a.bar(x, y, width)
-        labels = list(labels)
-        a.set_xticks(x + width / 2.0)
+        x_axis_values, y_axis_values, labels = self.get_graph_data(data)
+        sub_plot.bar(x_axis_values, y_axis_values, width)
+        # labels = list(labels)
+        sub_plot.set_xticks(x_axis_values + width / 2.0)
         if len(labels) > 5 and len(max(labels, key=lambda l: len(l))) > 2:
-            f.subplots_adjust(bottom=0.3)
-            a.set_xticklabels(labels, rotation=45, ha='right')
+            figure.subplots_adjust(bottom=0.3)
+            sub_plot.set_xticklabels(labels, rotation=45, ha='right')
         else:
-            a.set_xticklabels(labels)
-        a.autoscale()
-        canvas = FigureCanvasTkAgg(f, self)
+            sub_plot.set_xticklabels(labels)
+        sub_plot.autoscale()
+        canvas = FigureCanvasTkAgg(figure, self)
         canvas.show()
         self.page_items.append(canvas.get_tk_widget())
         return canvas.get_tk_widget()
@@ -107,20 +109,29 @@ class NavigationPage(Frame):
         self.parent = parent
         self.controller = controller
         self.active_buttons = []
-        self.setup_page(data)
-        self.setup_buttons(data)
+        self.__setup_page(data)
+        self.__setup_content(data)
 
-    def setup_page(self, data):
+    def __setup_page(self, data):
         label = Label(self, text="Document Tracker Analyser")
         label.grid(column=0, row=0)
-        # data = self.data.get_views_by_browser_global()
         button = Button(self, text="Global browser stats",
                         command=lambda: self.controller.show_graph_page_browser(data.get_views_by_browser_global()))
         button.grid(column=1, row=0)
 
-    def setup_buttons(self, data):
+    def __setup_content(self, data):
+        self.__setup_buttons(data)
+        self.__setup_readership(data)
+
+    def __setup_readership(self, data):
+        readers = sorted(data.visitors.values(), key=lambda r: r.total_view_time(), reverse=True)
+        for val, reader in enumerate(readers[:10], 1):
+            text = str(val) + ": " + reader.uuid[:6] + "..."
+            label = Label(self, text=text + " " + str(reader.total_view_time()) + " time viewed")
+            label.grid(column=3, row=val)
+
+    def __setup_buttons(self, data):
         docs = sorted(data.documents.values(), key=lambda document: len(document.views), reverse=True)
-        # Setup documents
         for val, doc in enumerate(docs[:20], 1):
             text = doc.doc_id[:6] + "... "
             button = Button(self, text=text, width=20,
@@ -129,20 +140,14 @@ class NavigationPage(Frame):
             label = Label(self, text=str(len(doc.views)) + " views")
             label.grid(column=1, row=val)
             self.active_buttons.append((button, label))
-        # Setup Readers
-        readers = sorted(data.visitors.values(), key=lambda r: r.total_view_time(), reverse=True)
-        for val, reader in enumerate(readers[:10], 1):
-            text = str(val) + ": " + reader.uuid[:6] + "..."
-            label = Label(self, text=text + " " + str(reader.total_view_time()) + " time viewed")
-            label.grid(column=3, row=val)
 
 
 class Controller(Tk):
-    def __init__(self, task=None, doc_id=None, user_id=None, *args, **kwargs):
+    def __init__(self, file_name, task=None, doc_id=None, *args, **kwargs):
         Tk.__init__(self, *args, **kwargs)
         Tk.wm_title(self, "Document Tracker Analyser")
         self.style = Style()
-        self.data = DataLoader(use_test_data=False)
+        self.data = DataLoader(file_name)
         container = Frame(self)
         container.pack(side="top", fill="both", expand=True)
         container.grid_rowconfigure(0, weight=1)

@@ -4,16 +4,13 @@ Tidy front page
 Code improvements:
 Change some functions to properties
 lots of try, catches
-override repr, string etc in classes
+override repr, str etc in classes
 
 Needed features:
 Text box entry for doc-views.
 
 Report:
-Introduction
-Requirements Checklist
 Design Considerations
-User Guides
 Developer Guide
 Testing
 Conclusions

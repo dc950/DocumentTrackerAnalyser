@@ -1,12 +1,14 @@
+import itertools
 from ua_parser import user_agent_parser
 from countryinfo import country_to_cont, continents
 
+#  This prevents each view having to recreate
+parsed_user_agent_strings = {}
+
 
 class Reader:
-    def __init__(self, username, uuid, source):
-        self.username = username
+    def __init__(self, uuid, ):
         self.uuid = uuid
-        self.source = source
         self.doc_views = []
 
     def total_view_time(self):
@@ -37,6 +39,7 @@ class Document:
 
     def get_views_by_key(self, key):
         views_by_key = {}
+        self.also_likes()
         for view in self.views:
             item = key(view)
             if item in views_by_key:
@@ -55,7 +58,7 @@ class Document:
         """
         doc_views = {}
         # define generator of readers, not including input one
-        readers = (view.visitor for view in self.views if view.visitor != user)
+        readers = (view.visitor for view in self.views if view.visitor is not user)
         for reader in readers:
             for view in reader.doc_views:
                 document = view.document
@@ -63,13 +66,13 @@ class Document:
                     continue
                 if document in doc_views:
                     doc_views[document][0] += 1
-                    doc_views[document][1] += view.time_viewed or 0
+                    doc_views[document][1] += view.time_viewed or 0  # If there is no time, add 0
                 else:
                     doc_views.update({document: [1, view.time_viewed or 0]})
         if sort is not None:
             top_docs = sort(doc_views)[:amount]
         else:
-            top_docs = doc_views.keys()[:amount]
+            top_docs = itertools.islice(doc_views.keys(), 0, 10)
         return top_docs
 
 
@@ -79,14 +82,15 @@ class DocumentView:
         self.document = document
         self.time_viewed = time_viewed
         self.user_agent_string = user_agent
-        self.__user_agent_cache = None  # parsing each time can be slow
+        #  self.__user_agent = None
         self.country = country
 
     @property
     def user_agent(self):
-        if self.__user_agent_cache is None:
-            self.__user_agent_cache = user_agent_parser.ParseUserAgent(self.user_agent_string)["family"]
-        return self.__user_agent_cache
+        if self.user_agent_string not in parsed_user_agent_strings:
+            parsed_user_agent_strings[self.user_agent_string] = \
+                user_agent_parser.ParseUserAgent(self.user_agent_string)["family"]
+        return parsed_user_agent_strings[self.user_agent_string]
 
     @property
     def continent_name(self):

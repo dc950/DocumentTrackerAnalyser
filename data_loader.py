@@ -3,14 +3,14 @@ from view_data import Reader, Document, DocumentView
 
 
 class DataLoader:
-    def __init__(self, use_test_data=False, only_reads=False):
+    def __init__(self, file_name, only_reads=False):
         self.documents = {}
         self.visitors = {}
-        self.__load_data(use_test_data, only_reads)
+        self.__load_data(file_name, only_reads)
 
-    def __load_data(self, use_test_data, only_reads):
+    def __load_data(self, file_name, only_reads):
         json_data = []
-        data_file_name = 'json_data/issuu_sample.json' if use_test_data else 'json_data/sample_100k_lines.json' #'json_data/issuu_cw2.json' #
+        data_file_name = file_name
         with open(data_file_name) as f:
             for line in f:
                 json_data.append(json.loads(line))
@@ -25,16 +25,15 @@ class DataLoader:
             return
         document = self.__create_document(item)
         reader = self.__create_reader(item)
-        event_readtime = item.get("event_readtime")
-        doc_view = DocumentView(reader, document, event_readtime,  item["visitor_useragent"], item["visitor_country"])
+        doc_view = DocumentView(reader, document, item.get("event_readtime"),
+                                item["visitor_useragent"], item["visitor_country"])
         document.views.append(doc_view)
         reader.doc_views.append(doc_view)
 
     def __create_reader(self, item):
         visitor_id = item["visitor_uuid"]
         if visitor_id not in self.visitors:
-            reader = Reader(item["visitor_username"] if "visitor_username" in item else None,
-                            visitor_id, item["visitor_source"])
+            reader = Reader(visitor_id)
             self.visitors.update({visitor_id: reader})
         else:
             reader = self.visitors[visitor_id]
