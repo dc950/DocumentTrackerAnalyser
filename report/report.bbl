@@ -1,0 +1,23 @@
+\begin{thebibliography}{1}
+
+\bibitem{_pep_????}
+{{PEP}} 8 -- {{Style Guide}} for {{Python Code}}.
+\newblock \url{https://www.python.org/dev/peps/pep-0008/}.
+
+\bibitem{_pycharm_????}
+{{PyCharm}}.
+\newblock \url{https://www.jetbrains.com/pycharm/}.
+
+\bibitem{martin_clean_2008}
+Robert~C. Martin.
+\newblock {\em Clean {{Code}}: {{A Handbook}} of {{Agile Software
+  Craftsmanship}}}.
+\newblock {Prentice Hall}, Upper Saddle River, NJ, 1 edition edition, August
+  2008.
+
+\bibitem{_virtual_????}
+Virtual {{Environments}} \textemdash{} {{The Hitchhiker}}'s {{Guide}} to
+  {{Python}}.
+\newblock \url{http://docs.python-guide.org/en/latest/dev/virtualenvs/}.
+
+\end{thebibliography}

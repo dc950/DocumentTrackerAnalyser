@@ -8,11 +8,12 @@
 \graphicspath{ {Screenshots/} }
 \usepackage{float}
 \usepackage{tabularx}
-
+\usepackage{listings}
 %Formatting
 \usepackage[mar
 gin=2cm]{geometry}
 \usepackage{setspace}
+\lstset{frame=none, basicstyle=\small\sffamily\linespread{0.5}, lineskip={-1.0pt}} %basicstyle=\scriptsize\sffamily} 
 
 \setlength\intextsep{0pt}
 
@@ -25,25 +26,54 @@ dac31@hw.ac.uk\\
 H00153427}
 \maketitle
 
-
+\newpage
+\tableofcontents
+\addtocontents{toc}{\protect\thispagestyle{empty}}
 
 \chapter{Introduction}
-
 For this coursework task I created a simple data analysis tool for a document tracker built in python.
+\section{Assumptions}
+One slight difference from the spec in my implementation is that I have combined task 2a and 2b into the same screen.  When the task (-t) from the command line is either 2, 2a, or 2b the screen showing both views by country and views by continent will be displayed.  Views by browser for that document are also displayed as an additional piece of functionality.
+
+\section{Report Summary}
+This report will cover:
+\begin{itemize}
+\item{A requirements checklist}
+\item{A breakdown of the design considerations I made when implementing the project}
+\item{A user guide}
+\item{A developer guide}
+\item{Details on my testing process}
+\item{Conclusions from developing the project}
+\end{itemize} 
 
 
 
 \chapter{Requirements' Checklist}
+I completed all of the tasks required for the project:
 
-I completed all of the tasks and requirements for the projects
-
+\section{Implementing in python}
+The program was implemented in python 3.5.2
+\section{Views by Country/Continent}
+For any given document the program will display a histogram showing both the views by country and by continent
+\section{Views by Browser}
+The program can show a histogram of the views by browser for every entry in the data-file.  This includes an unsorted display of all different user-agents and sorted by browser family
+\section{Readership Profiles}
+The program will display the top 10 users with most time spent viewing documents
+\section{Also likes Functionality}
+For any document a list of up to 10 documents that will be 'also liked' - other documents read by  users who have read this document.  This can be sorted by either readership profile or number of views.  In the implementation, any function can be passed in to sort it differently.  It also allows for a user to be passed in, meaning that that user is ignored in finding related documents (as if it was being recommended to that user)
+\section{GUI Usage}
+There is a full GUI to allow a user to browser through the various functionalities that the system offers.
+\section{Command Line Usage}
+The program can be started using command line parameters which allows the program to be launched in certain ways for each task.
 
 \chapter{Design Considerations}
 \section{Data Representation Classes}
 I created 3 classes to represent the data that was read in from the input file: A Document class, a Reader class and a View class.  I decided on this structure as it allowed for a simple, natural way to explore the dataset and the Documents and Readers could be linked by views.
 
 \subsection{Document}
-The Document Class stores information about the document, including the document UUID and a list of the views of the document.  It contains functions to get the data required for creating relevant histograms for the document.
+The Document Class stores information about the document, including the document UUID and a list of the views of the document.  It contains functions to get the data required for creating relevant histograms for the document, as well as an 'also likes' function.
+
+\subsubsection{Also Likes}
 
 \subsection{Reader}
 The Reader class contains the UUID and views of a reader (visitor).  There is also a function to get the users total view time.
@@ -64,22 +94,119 @@ I used the data loader as a class instead of a series of global variables and fu
 To implement the GUI I used the tkinter library.  My implementation involved creating a few classes.  The Controller class was used to control what page was viewable.  The NavigationPage class was used to represent the main page from which many things could be accessed, the GraphPage was used to represent the page displaying the histograms and the HeaderFrame was used for the top half of each graph page.
 
 \subsection{Controller}
+The main function of the Controller is to control the GUI pages, including making sure they can access the relevant data that they need.  It extends the Tk class to give it the functionality to switch out which frame is active and where the frame should be placed (in this case, the whole window).  To give them access to the data it creates a DataLoader object.  It then creates stores both the GraphPage and the NavigationPage and methods to load each page.  
 
 \subsection{NavigationPage}
+The NavigationPage will perform all of its functionality when it is initialised.  It will create the required labels and buttons, which have their commands specified using lambda expressions.
 
 \subsection{GraphPage}
+
 
 \subsection{HeaderFrame}
 
 \section{GUI Design}
 
-\section{Coding Style}
-
 \section{Command Line Management}
+To effectively manage parameters passed into the program from the command line I used python's "getopt" method.  This paired up the option and argument for all of the arguments (e.g. '-t' and '2a').  I could then assign the arguments to the correct variable without having to do much micromanagement.  Then, using these variables I could run the correct task.  When the GUI was required the code would launch the GUI and pass in a parameter which would make sure that it navigates to the correct page when launched.
 
+\section{Use of Advanced Language Features}
+Throughout the code for the project I made use of many of python's advanced language features to create cleaner and faster code.
+\subsection{Lambda Expressions}
+In python, lambda expressions are used for creating simple, in-line functions.  My main use of 
+\subsection{Generators}
+\subsection{Iterators}
+\subsection{Advanced In-Line Functionality}
+
+\section{Coding Style}
+I made an attempt to ensure that my code style followed the official python style guide\cite{_pep_????}.  This was aided by using the PyCharm IDE\cite{_pycharm_????} which notified me of any style infringements.
+
+% Get some examples for the good stuff here
+In addition to how the code was laid out, I used other means to ensure that my code was clean, readable and maintainable, mostly by following guides from the book Clean Code\cite{martin_clean_2008}.  This included aspects to creating high quality code that I followed.
+
+One thing is variable naming.  I made sure that all of my variable names were smart so anyone looking at a variable could tell what it is.  I tried to avoid names like 'x' or 'val'.  There were occasions where I created more abstract code that means a variable could be one of several things, which meant occasionally using names such as 'item'.
+
+Another important aspect was appropriately defining functions.  I tried to keep my functions both smartly named and small.  This helps keep functions stick to the single responsibility principal and makes it easier to read:  its hard for a programmer to understand what is going on if they look at a long stream of code; breaking these up into functions make it clear what each part is doing.
+
+I also made appropriate use of comments, by using them sparingly and only when my code fails to simply describe itself.  Normally, good variable and function names can eliminate the use of most comments
+% Example of when i did use some.  Talk about doc strings.
+
+
+% Add some screenshots here
 \chapter{User Guide}
+\section{Required Software}
+
+\section{Launching the Program}
+The main gui for the program can be launched by running \lstinline{./cw2 } from a linux command line.  If it fails there may be need for certain extensions to be installed.  Running \lstinline{pip install -r requirements.txt} will install all required extensions.  It may be a good idea to set-up a virtual environment\cite{_virtual_????} to do this.
+\section{Viewing a Document's Data}
+To view the data for a document, either click it from the "Most viewed" list or enter its uuid in the "Document Search" field and press the search" button.
+\section{Readership Profile}
+When the GUI is launched, a readership profile of the top 10 readers is displayed on the right of the screen.
+\section{Global Browser Views}
+To view data on the global browser views, click the "global browser views" button on the main page.  To view for all entries and for each individual user-agent, the command line must be used (see \ref{usercommand})
+\section{Command Line Tasks}\label{usercommand} % Will need to change if file thing is added
+\subsection{General Usage}
+The command line parameters will either display the required information or launch the program and navigate to the appropriate screen.  For general usage, launching the command line can be used as follows:
+\begin{lstlisting}
+./cw2 -t task_id -d doc_uuid -u user_uuid
+\end{lstlisting}
+\subsection{Views by Country and Continent}
+To see the views by country and continent for a specific document use the following command where \lstinline{<doc_id>} is a document UUID:
+\begin{lstlisting}
+./cw2 -t 2 -d <doc_id>
+\end{lstlisting}
+\subsection{Global Browser Statistics}
+To view the global browser statistics for each individual user-agent use the following command:
+\begin{lstlisting}
+./cw2 -t 3a
+\end{lstlisting}
+To view the global browser statistics for each browser family use the following command:
+\begin{lstlisting}
+./cw2 -t 3b
+\end{lstlisting}
+\subsection{Readership Profile}
+To see the readership profile of the top 10 readers use the following command:
+\begin{lstlisting}
+./cw2 -t 4
+\end{lstlisting}
+\subsection{Also likes Functionality}
+The also likes functionality can be used for two different sorting methods (by number of views and by the readership profile). To sort by readership profile, where \lstinline{<doc_id>} is a document UUID, enter:
+\begin{lstlisting}
+./cw2 -t 5d -d <doc_id>
+\end{lstlisting}
+For sorting by number of readers of the same document enter:
+\begin{lstlisting}
+./cw2 -t 5e -d <doc_id>
+\end{lstlisting}
+The also likes functionality is also able to accept a user.  For example, the following would sort by number of viewers where \lstinline{<user_id>} is a visitor UUID:
+\begin{lstlisting}
+./cw2 -t 5e -d <doc_id> -u <user_id>
+\end{lstlisting}
+
 \chapter{Developer Guide}
+
+The project is split among 5 files:
+\begin{itemize}
+\item{cw2}
+\item{countryinfo.py}
+\item{data\_loader.py}
+\item{gui\_controller.py}
+\item{view\_data.py}
+\end{itemize}
+
+\section{cw2}
+cw2 is the main file for launching the application.  It handles parameter inputs and launches the program in the way required.
+\section{Countryinfo}
+The countryinfo file simply contains two dictionaries - one linking country code to continent codes and one linking continent codes to continent names.
+\section{Data Loader}
+The data\_loader file manages the data 
+\section{Gui Controller}
+\section{View Data}
+
 \chapter{Testing}
+
 \chapter{Conclusions}
+
+\bibliographystyle{unsrt}
+\bibliography{ref}
 
 \end{document}

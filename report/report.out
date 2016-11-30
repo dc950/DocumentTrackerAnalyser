@@ -1,20 +1,50 @@
 \BOOKMARK [0][-]{chapter.1}{Introduction}{}% 1
-\BOOKMARK [0][-]{chapter.2}{Requirements' Checklist}{}% 2
-\BOOKMARK [0][-]{chapter.3}{Design Considerations}{}% 3
-\BOOKMARK [1][-]{section.3.1}{Data Representation Classes}{chapter.3}% 4
-\BOOKMARK [2][-]{subsection.3.1.1}{Document}{section.3.1}% 5
-\BOOKMARK [2][-]{subsection.3.1.2}{Reader}{section.3.1}% 6
-\BOOKMARK [2][-]{subsection.3.1.3}{DocumentView}{section.3.1}% 7
-\BOOKMARK [2][-]{subsection.3.1.4}{DataLoader}{section.3.1}% 8
-\BOOKMARK [1][-]{section.3.2}{GUI Classes}{chapter.3}% 9
-\BOOKMARK [2][-]{subsection.3.2.1}{Controller}{section.3.2}% 10
-\BOOKMARK [2][-]{subsection.3.2.2}{NavigationPage}{section.3.2}% 11
-\BOOKMARK [2][-]{subsection.3.2.3}{GraphPage}{section.3.2}% 12
-\BOOKMARK [2][-]{subsection.3.2.4}{HeaderFrame}{section.3.2}% 13
-\BOOKMARK [1][-]{section.3.3}{GUI Design}{chapter.3}% 14
-\BOOKMARK [1][-]{section.3.4}{Coding Style}{chapter.3}% 15
-\BOOKMARK [1][-]{section.3.5}{Command Line Management}{chapter.3}% 16
-\BOOKMARK [0][-]{chapter.4}{User Guide}{}% 17
-\BOOKMARK [0][-]{chapter.5}{Developer Guide}{}% 18
-\BOOKMARK [0][-]{chapter.6}{Testing}{}% 19
-\BOOKMARK [0][-]{chapter.7}{Conclusions}{}% 20
+\BOOKMARK [1][-]{section.1.1}{Assumptions}{chapter.1}% 2
+\BOOKMARK [1][-]{section.1.2}{Report Summary}{chapter.1}% 3
+\BOOKMARK [0][-]{chapter.2}{Requirements' Checklist}{}% 4
+\BOOKMARK [1][-]{section.2.1}{Implementing in python}{chapter.2}% 5
+\BOOKMARK [1][-]{section.2.2}{Views by Country/Continent}{chapter.2}% 6
+\BOOKMARK [1][-]{section.2.3}{Views by Browser}{chapter.2}% 7
+\BOOKMARK [1][-]{section.2.4}{Readership Profiles}{chapter.2}% 8
+\BOOKMARK [1][-]{section.2.5}{Also likes Functionality}{chapter.2}% 9
+\BOOKMARK [1][-]{section.2.6}{GUI Usage}{chapter.2}% 10
+\BOOKMARK [1][-]{section.2.7}{Command Line Usage}{chapter.2}% 11
+\BOOKMARK [0][-]{chapter.3}{Design Considerations}{}% 12
+\BOOKMARK [1][-]{section.3.1}{Data Representation Classes}{chapter.3}% 13
+\BOOKMARK [2][-]{subsection.3.1.1}{Document}{section.3.1}% 14
+\BOOKMARK [2][-]{subsection.3.1.2}{Reader}{section.3.1}% 15
+\BOOKMARK [2][-]{subsection.3.1.3}{DocumentView}{section.3.1}% 16
+\BOOKMARK [2][-]{subsection.3.1.4}{DataLoader}{section.3.1}% 17
+\BOOKMARK [1][-]{section.3.2}{GUI Classes}{chapter.3}% 18
+\BOOKMARK [2][-]{subsection.3.2.1}{Controller}{section.3.2}% 19
+\BOOKMARK [2][-]{subsection.3.2.2}{NavigationPage}{section.3.2}% 20
+\BOOKMARK [2][-]{subsection.3.2.3}{GraphPage}{section.3.2}% 21
+\BOOKMARK [2][-]{subsection.3.2.4}{HeaderFrame}{section.3.2}% 22
+\BOOKMARK [1][-]{section.3.3}{GUI Design}{chapter.3}% 23
+\BOOKMARK [1][-]{section.3.4}{Command Line Management}{chapter.3}% 24
+\BOOKMARK [1][-]{section.3.5}{Use of Advanced Language Features}{chapter.3}% 25
+\BOOKMARK [2][-]{subsection.3.5.1}{Lambda Expressions}{section.3.5}% 26
+\BOOKMARK [2][-]{subsection.3.5.2}{Generators}{section.3.5}% 27
+\BOOKMARK [2][-]{subsection.3.5.3}{Iterators}{section.3.5}% 28
+\BOOKMARK [2][-]{subsection.3.5.4}{Advanced In-Line Functionality}{section.3.5}% 29
+\BOOKMARK [1][-]{section.3.6}{Coding Style}{chapter.3}% 30
+\BOOKMARK [0][-]{chapter.4}{User Guide}{}% 31
+\BOOKMARK [1][-]{section.4.1}{Required Software}{chapter.4}% 32
+\BOOKMARK [1][-]{section.4.2}{Launching the Program}{chapter.4}% 33
+\BOOKMARK [1][-]{section.4.3}{Viewing a Document's Data}{chapter.4}% 34
+\BOOKMARK [1][-]{section.4.4}{Readership Profile}{chapter.4}% 35
+\BOOKMARK [1][-]{section.4.5}{Global Browser Views}{chapter.4}% 36
+\BOOKMARK [1][-]{section.4.6}{Command Line Tasks}{chapter.4}% 37
+\BOOKMARK [2][-]{subsection.4.6.1}{General Usage}{section.4.6}% 38
+\BOOKMARK [2][-]{subsection.4.6.2}{Views by Country and Continent}{section.4.6}% 39
+\BOOKMARK [2][-]{subsection.4.6.3}{Global Browser Statistics}{section.4.6}% 40
+\BOOKMARK [2][-]{subsection.4.6.4}{Readership Profile}{section.4.6}% 41
+\BOOKMARK [2][-]{subsection.4.6.5}{Also likes Functionality}{section.4.6}% 42
+\BOOKMARK [0][-]{chapter.5}{Developer Guide}{}% 43
+\BOOKMARK [1][-]{section.5.1}{cw2}{chapter.5}% 44
+\BOOKMARK [1][-]{section.5.2}{Countryinfo}{chapter.5}% 45
+\BOOKMARK [1][-]{section.5.3}{Data Loader}{chapter.5}% 46
+\BOOKMARK [1][-]{section.5.4}{Gui Controller}{chapter.5}% 47
+\BOOKMARK [1][-]{section.5.5}{View Data}{chapter.5}% 48
+\BOOKMARK [0][-]{chapter.6}{Testing}{}% 49
+\BOOKMARK [0][-]{chapter.7}{Conclusions}{}% 50
