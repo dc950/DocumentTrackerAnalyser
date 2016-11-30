@@ -1,7 +1,20 @@
 \BOOKMARK [0][-]{chapter.1}{Introduction}{}% 1
 \BOOKMARK [0][-]{chapter.2}{Requirements' Checklist}{}% 2
 \BOOKMARK [0][-]{chapter.3}{Design Considerations}{}% 3
-\BOOKMARK [0][-]{chapter.4}{User Guide}{}% 4
-\BOOKMARK [0][-]{chapter.5}{Developer Guide}{}% 5
-\BOOKMARK [0][-]{chapter.6}{Testing}{}% 6
-\BOOKMARK [0][-]{chapter.7}{Conclusions}{}% 7
+\BOOKMARK [1][-]{section.3.1}{Data Representation Classes}{chapter.3}% 4
+\BOOKMARK [2][-]{subsection.3.1.1}{Document}{section.3.1}% 5
+\BOOKMARK [2][-]{subsection.3.1.2}{Reader}{section.3.1}% 6
+\BOOKMARK [2][-]{subsection.3.1.3}{DocumentView}{section.3.1}% 7
+\BOOKMARK [2][-]{subsection.3.1.4}{DataLoader}{section.3.1}% 8
+\BOOKMARK [1][-]{section.3.2}{GUI Classes}{chapter.3}% 9
+\BOOKMARK [2][-]{subsection.3.2.1}{Controller}{section.3.2}% 10
+\BOOKMARK [2][-]{subsection.3.2.2}{NavigationPage}{section.3.2}% 11
+\BOOKMARK [2][-]{subsection.3.2.3}{GraphPage}{section.3.2}% 12
+\BOOKMARK [2][-]{subsection.3.2.4}{HeaderFrame}{section.3.2}% 13
+\BOOKMARK [1][-]{section.3.3}{GUI Design}{chapter.3}% 14
+\BOOKMARK [1][-]{section.3.4}{Coding Style}{chapter.3}% 15
+\BOOKMARK [1][-]{section.3.5}{Command Line Management}{chapter.3}% 16
+\BOOKMARK [0][-]{chapter.4}{User Guide}{}% 17
+\BOOKMARK [0][-]{chapter.5}{Developer Guide}{}% 18
+\BOOKMARK [0][-]{chapter.6}{Testing}{}% 19
+\BOOKMARK [0][-]{chapter.7}{Conclusions}{}% 20

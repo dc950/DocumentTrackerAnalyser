@@ -1,13 +1,10 @@
-from tkinter import Tk, Frame, BOTH, LEFT, TOP
+from tkinter import Tk, Frame, BOTH, LEFT, TOP, BOTTOM
 from tkinter.ttk import Style, Button, Label
-
 import matplotlib
 import numpy as np
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
-
 from data_loader import DataLoader
-
 matplotlib.use("TkAgg")
 
 
@@ -23,7 +20,7 @@ class HeaderFrame(Frame):
     def __init__(self, parent, controller):
         Frame.__init__(self, parent)
         button1 = Button(self, text="Back to Home",
-                         command=lambda: controller.show_frame(NavigationWindow))
+                         command=lambda: controller.show_frame(NavigationPage))
         button1.pack(side=TOP)
         self.controller = controller
         self.buttons = []
@@ -104,11 +101,10 @@ class GraphPage(Frame):
             item.pack_forget()
 
 
-class NavigationWindow(Frame):
+class NavigationPage(Frame):
     def __init__(self, parent, controller, data):
         Frame.__init__(self, parent, background="white")
         self.parent = parent
-
         self.controller = controller
         self.active_buttons = []
         self.setup_page(data)
@@ -155,7 +151,7 @@ class Controller(Tk):
         self.frames = {}
         self.setup_pages(container)
 
-        self.show_frame(NavigationWindow)
+        self.show_frame(NavigationPage)
 
         if task == '2':
             self.show_graph_page(self.data.documents[doc_id])
@@ -165,8 +161,8 @@ class Controller(Tk):
             self.show_graph_page_browser(self.data.get_views_by_browser_global())
 
     def setup_pages(self, container):
-        frame = NavigationWindow(container, self, self.data)
-        self.frames[NavigationWindow] = frame
+        frame = NavigationPage(container, self, self.data)
+        self.frames[NavigationPage] = frame
         frame.grid(row=0, column=0, sticky="nsew")
 
         frame = GraphPage(container, self)
@@ -186,5 +182,3 @@ class Controller(Tk):
     def show_frame(self, container):
         frame = self.frames[container]
         frame.tkraise()
-
-

@@ -1,5 +1,4 @@
 from ua_parser import user_agent_parser
-
 from countryinfo import country_to_cont, continents
 
 
@@ -82,9 +81,6 @@ class DocumentView:
         self.user_agent_string = user_agent
         self.__user_agent_cache = None  # parsing each time can be slow
         self.country = country
-
-    def __repr__(self):
-        return '<View obj between document '+self.document.doc_id+' and reader '+self.visitor.uuid+'>'
 
     @property
     def user_agent(self):

@@ -1,19 +1,18 @@
 import json
-
 from view_data import Reader, Document, DocumentView
 
 
 class DataLoader:
-    def __init__(self, use_test_data=False, only_reads=True):
+    def __init__(self, use_test_data=False, only_reads=False):
         self.documents = {}
         self.visitors = {}
         self.__load_data(use_test_data, only_reads)
 
     def __load_data(self, use_test_data, only_reads):
         json_data = []
-        data_file_name = 'json_data/issuu_sample.json' if use_test_data else 'json_data/sample_100k_lines.json' #'/json_data/issuu_cw2.json' #
-        with open(data_file_name) as data_file:
-            for line in data_file:
+        data_file_name = 'json_data/issuu_sample.json' if use_test_data else 'json_data/sample_100k_lines.json' #'json_data/issuu_cw2.json' #
+        with open(data_file_name) as f:
+            for line in f:
                 json_data.append(json.loads(line))
 
         for view in json_data:
@@ -21,7 +20,6 @@ class DataLoader:
 
     def __decode_item(self, item, only_reads):
         if "subject_doc_id" not in item:
-
             return
         if only_reads and item["event_type"] != "read" and item["event_type"] != "pagereadtime":
             return

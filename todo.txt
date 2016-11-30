@@ -1,5 +1,5 @@
 Fix the GUI:
-General gui tidying
+Tidy front page
 
 Code improvements:
 Change some functions to properties
