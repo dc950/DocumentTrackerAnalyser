@@ -23,28 +23,23 @@
 \BOOKMARK [1][-]{section.3.3}{GUI Design}{chapter.3}% 23
 \BOOKMARK [1][-]{section.3.4}{Command Line Management}{chapter.3}% 24
 \BOOKMARK [1][-]{section.3.5}{Use of Advanced Language Features}{chapter.3}% 25
-\BOOKMARK [2][-]{subsection.3.5.1}{Lambda Expressions}{section.3.5}% 26
-\BOOKMARK [2][-]{subsection.3.5.2}{Generators}{section.3.5}% 27
-\BOOKMARK [2][-]{subsection.3.5.3}{Iterators}{section.3.5}% 28
-\BOOKMARK [2][-]{subsection.3.5.4}{Advanced In-Line Functionality}{section.3.5}% 29
-\BOOKMARK [1][-]{section.3.6}{Coding Style}{chapter.3}% 30
-\BOOKMARK [0][-]{chapter.4}{User Guide}{}% 31
-\BOOKMARK [1][-]{section.4.1}{Required Software}{chapter.4}% 32
-\BOOKMARK [1][-]{section.4.2}{Launching the Program}{chapter.4}% 33
-\BOOKMARK [1][-]{section.4.3}{Viewing a Document's Data}{chapter.4}% 34
-\BOOKMARK [1][-]{section.4.4}{Readership Profile}{chapter.4}% 35
-\BOOKMARK [1][-]{section.4.5}{Global Browser Views}{chapter.4}% 36
-\BOOKMARK [1][-]{section.4.6}{Command Line Tasks}{chapter.4}% 37
-\BOOKMARK [2][-]{subsection.4.6.1}{General Usage}{section.4.6}% 38
-\BOOKMARK [2][-]{subsection.4.6.2}{Views by Country and Continent}{section.4.6}% 39
-\BOOKMARK [2][-]{subsection.4.6.3}{Global Browser Statistics}{section.4.6}% 40
-\BOOKMARK [2][-]{subsection.4.6.4}{Readership Profile}{section.4.6}% 41
-\BOOKMARK [2][-]{subsection.4.6.5}{Also likes Functionality}{section.4.6}% 42
-\BOOKMARK [0][-]{chapter.5}{Developer Guide}{}% 43
-\BOOKMARK [1][-]{section.5.1}{cw2}{chapter.5}% 44
-\BOOKMARK [1][-]{section.5.2}{Countryinfo}{chapter.5}% 45
-\BOOKMARK [1][-]{section.5.3}{Data Loader}{chapter.5}% 46
-\BOOKMARK [1][-]{section.5.4}{Gui Controller}{chapter.5}% 47
-\BOOKMARK [1][-]{section.5.5}{View Data}{chapter.5}% 48
-\BOOKMARK [0][-]{chapter.6}{Testing}{}% 49
-\BOOKMARK [0][-]{chapter.7}{Conclusions}{}% 50
+\BOOKMARK [1][-]{section.3.6}{Coding Style}{chapter.3}% 26
+\BOOKMARK [0][-]{chapter.4}{User Guide}{}% 27
+\BOOKMARK [1][-]{section.4.1}{Launching the Program}{chapter.4}% 28
+\BOOKMARK [1][-]{section.4.2}{Viewing a Document's Data}{chapter.4}% 29
+\BOOKMARK [1][-]{section.4.3}{Readership Profile}{chapter.4}% 30
+\BOOKMARK [1][-]{section.4.4}{Global Browser Views}{chapter.4}% 31
+\BOOKMARK [1][-]{section.4.5}{Command Line Tasks}{chapter.4}% 32
+\BOOKMARK [2][-]{subsection.4.5.1}{General Usage}{section.4.5}% 33
+\BOOKMARK [2][-]{subsection.4.5.2}{Views by Country and Continent}{section.4.5}% 34
+\BOOKMARK [2][-]{subsection.4.5.3}{Global Browser Statistics}{section.4.5}% 35
+\BOOKMARK [2][-]{subsection.4.5.4}{Readership Profile}{section.4.5}% 36
+\BOOKMARK [2][-]{subsection.4.5.5}{Also likes Functionality}{section.4.5}% 37
+\BOOKMARK [0][-]{chapter.5}{Developer Guide}{}% 38
+\BOOKMARK [1][-]{section.5.1}{cw2}{chapter.5}% 39
+\BOOKMARK [1][-]{section.5.2}{Countryinfo}{chapter.5}% 40
+\BOOKMARK [1][-]{section.5.3}{Data Loader}{chapter.5}% 41
+\BOOKMARK [1][-]{section.5.4}{Gui Controller}{chapter.5}% 42
+\BOOKMARK [1][-]{section.5.5}{View Data}{chapter.5}% 43
+\BOOKMARK [0][-]{chapter.6}{Testing}{}% 44
+\BOOKMARK [0][-]{chapter.7}{Conclusions}{}% 45

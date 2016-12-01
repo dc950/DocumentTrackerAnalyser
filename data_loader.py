@@ -3,7 +3,7 @@ from view_data import Reader, Document, DocumentView
 
 
 class DataLoader:
-    def __init__(self, file_name, only_reads=False):
+    def __init__(self, file_name, only_reads=True):
         self.documents = {}
         self.visitors = {}
         self.__load_data(file_name, only_reads)

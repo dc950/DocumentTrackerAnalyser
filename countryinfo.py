@@ -9,7 +9,7 @@ continents = {
     'ZZ': 'Unknown Continent'
 }
 
-country_to_cont = {
+country_to_continent = {
     'AF': 'AS',
     'AX': 'EU',
     'AL': 'EU',

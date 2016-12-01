@@ -6,8 +6,8 @@ from gui_controller import Controller
 from gui_controller import sort_by_readtime, sort_by_views
 
 
-def start_gui(file_name, task=None, doc_id=None):
-    app = Controller(file_name, task=task, doc_id=doc_id)
+def start_gui(file_name, task=None, doc_id=None, reads_only=False):
+    app = Controller(file_name, task=task, doc_id=doc_id, only_reads=reads_only)
     app.mainloop()
     return app
 
@@ -43,41 +43,42 @@ def run_task(doc_id, task_id, user_id, file_name):
         requires_error(doc_id is None, "No document id given")
         start_gui(file_name, task='2', doc_id=doc_id)
     elif task_id == '3a':
-        start_gui(file_name, task=task_id)
+        start_gui(file_name, task=task_id, reads_only=False)
     elif task_id == '3b':
-        start_gui(file_name, task=task_id)
+        start_gui(file_name, task=task_id, reads_only=False)
     elif task_id == '4':
         task_4(file_name)
-    elif task_id == '5a':
-        task_5(file_name, sort_by_views, doc_id, user_id)
-    elif task_id == '5b':
+    elif task_id == '5d':
         task_5(file_name, sort_by_readtime, doc_id, user_id)
+    elif task_id == '5e':
+        task_5(file_name, sort_by_views, doc_id, user_id)
     else:
         start_gui(file_name)
 
 
 def task_4(file_name):
     data = DataLoader(file_name, only_reads=False)
-    readers = sorted(data.visitors.values(), key=lambda r: r.total_view_time(), reverse=True)
+    readers = sorted(data.visitors.values(), key=lambda r: r.total_view_time, reverse=True)
     for i, reader in enumerate(readers[:10], 1):
-        print(str(i) + ": (" + reader.uuid + ", " + str(reader.total_view_time()) + ")")
+        print(str(i) + ": (" + reader.uuid + ", " + str(reader.total_view_time) + ")")
 
 
 def task_5(file_name, sort, doc_id, user_id):
     requires_error(doc_id is None, "No document id given")
     data_loader = DataLoader(file_name)
-    doc = data_loader.documents[doc_id]
-    if user_id is not None:
-        user = data_loader.visitors[user_id]
-    else:
-        user = None
+    try:
+        doc = data_loader.documents[doc_id]
+    except KeyError:
+        print("Document does not exist in data set")
+        sys.exit(2)
+    user = data_loader.visitors[user_id] or None
     also_likes = doc.also_likes(sort, user=user)
     if len(also_likes) == 0:
         print("No other likes found")
     else:
         print("Other liked documents:")
         for liked_doc in also_likes:
-            print(liked_doc.doc_id)
+            print(liked_doc[0].doc_id + ": " + str(liked_doc[1][0]) + " view(s), "+str(liked_doc[1][1])+" read-time")
 
 
 def requires_error(condition, msg):

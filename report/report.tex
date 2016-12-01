@@ -1,4 +1,4 @@
-\documentclass[11pt]{report}
+\documentclass[12pt]{report}
 
 \usepackage{graphicx}
 \usepackage{color} % needed if you use xfig graphics at all
@@ -35,6 +35,13 @@ For this coursework task I created a simple data analysis tool for a document tr
 \section{Assumptions}
 One slight difference from the spec in my implementation is that I have combined task 2a and 2b into the same screen.  When the task (-t) from the command line is either 2, 2a, or 2b the screen showing both views by country and views by continent will be displayed.  Views by browser for that document are also displayed as an additional piece of functionality.
 
+I also used an additional command-line argument to specify the datafile: -f
+
+I also assumed that for all tasks other than 3 that I would only take in instances which have and event\_type of read or pagereadtime.  For task 3 I use every item in the datafile as specified.  However, if this functionality is accessed through the GUI it will show for only the reads and pagereadtimes.
+
+For section 5 I did not create specific functions as specified in a) and b).  I obtain all of the related documents within 1 argument using a nested loop.  I did this as it made the task more efficient as I could track the views and read-times as I iterated through.
+
+Section 5 also mentions that a visitor id is required in addition to the document id but does not specify how this should be used.  The way I am using it by having the algorithm not use that user to find the documents, so it is fully based off of the interests of other users who have viewed the document.
 \section{Report Summary}
 This report will cover:
 \begin{itemize}
@@ -103,20 +110,19 @@ The NavigationPage will perform all of its functionality when it is initialised.
 The GraphPage controls the page on which the histograms are displayed.  Each time this page is loaded, all of the items on it are cleared and the new items are created and added.
 
 \subsection{HeaderFrame}
-
+The HeaderFrame represents the top part of the GraphPage.  It displays a button to return to the NavigationPage, a heading displaying the name of the document and a list of also liked documents.
 
 \section{GUI Design}
+I wanted to make the GUI easy to use so added extra functionality than required.  In the main page I added a list of the most viewed documents and how many times they were viewed.  There is also two text entry field that can take in a document uuid and a user uuid.
+
+When viewing the data for a document, it is shown on a different page and will display 3 histograms: The views by country, by continent and by browser.  Along the top of the screen the name of the document is displayed and a list of buttons for also liked documents - when the button is clicked that pages data will be shown.
 
 \section{Command Line Management}
 To effectively manage parameters passed into the program from the command line I used python's "getopt" method.  This paired up the option and argument for all of the arguments (e.g. '-t' and '2a').  I could then assign the arguments to the correct variable without having to do much micromanagement.  Then, using these variables I could run the correct task.  When the GUI was required the code would launch the GUI and pass in a parameter which would make sure that it navigates to the correct page when launched.
 
 \section{Use of Advanced Language Features}
-Throughout the code for the project I made use of many of python's advanced language features to create cleaner and faster code.
-\subsection{Lambda Expressions}
-In python, lambda expressions are used for creating simple, in-line functions.  My main use of 
-\subsection{Generators}
-\subsection{Iterators}
-\subsection{Advanced In-Line Functionality}
+Throughout the code for the project I made use of many of python's advanced language features to create cleaner and faster code.  One thing I commonly used was lambda expressions for defining  anonymous functions.  This was often used for sorting.  I also used in-line generators which allowed me to gather a sequence of items from 1 list.  One time this was done in a nested fashion in \lstinline{DataLoader.get_global_view_data}\lstinline{} to get every view from every visitor.
+
 
 \section{Coding Style}
 I made an attempt to ensure that my code style followed the official python style guide\cite{_pep_????}.  This was aided by using the PyCharm IDE\cite{_pycharm_????} which notified me of any style infringements.
@@ -134,10 +140,8 @@ I also made appropriate use of comments, by using them sparingly and only when m
 
 % Add some screenshots here
 \chapter{User Guide}
-\section{Required Software}
-
 \section{Launching the Program}
-The main gui for the program can be launched by running \lstinline{./cw2 } from a linux command line.  If it fails there may be need for certain extensions to be installed.  Running \lstinline{pip install -r requirements.txt} will install all required extensions.  It may be a good idea to set-up a virtual environment\cite{_virtual_????} to do this.
+The main gui for the program can be launched by running \lstinline{./cw2 } from a linux command line.  If it fails either python is not installed or there may be need for certain extensions to be installed.  Running \lstinline{pip install -r requirements.txt} will install all required extensions.  It may be a good idea to set-up a virtual environment\cite{_virtual_????} to do this.
 \section{Viewing a Document's Data}
 To view the data for a document, either click it from the "Most viewed" list or enter its uuid in the "Document Search" field and press the search" button.
 \section{Readership Profile}
@@ -196,16 +200,67 @@ The project is split among 5 files:
 
 \section{cw2}
 cw2 is the main file for launching the application.  It handles parameter inputs and launches the program in the way required.
+
 \section{Countryinfo}
 The countryinfo file simply contains two dictionaries - one linking country code to continent codes and one linking continent codes to continent names.
+
 \section{Data Loader}
-The data\_loader file manages the loading of the data.  All of its functionality is contained within the DataLoader class.  The constructor takes in a filename which it will open and read.  The data will then be converted into the data structures that the program (in view_data\ref{viewdata).}
+The \lstinline{data_loader} file manages the loading of the data.  All of its functionality is contained within the DataLoader class.  The constructor takes in a filename which it will open and read.  The data will then be converted into the data structures that the program (in \lstinline{view_data} \ref{viewdata}).  The loaded documents are users are stored in the fields documents and visitors, each of which is a dictionary using the uuid as a key.
+
 \section{Gui Controller}
+The gui\_controller file contains all of the user interface management.  The main classes in this file are Controller, NavigationPage, GraphPage and HeaderFrame.
+
+Controller manages the active displays and has a DataLoader to manage the data accessed by the GUI.  It initialises a NavigationPage and GraphPage and contains functions to load them.
+
+NavigationPage controls the main page from which a user can navigate to either the document graph pages or the global browser page.  All of its functionality is set-up when it is initialised.  A grid layout is used for this page.
+
+GraphPage represents the page on which the histograms are displayed.  Each graph is represented in a sub\_plot so the histogram from matplotlib is embedded within the GUI.  The graph page uses a pack layout as it is more dynamic for cases where there are many items of different sizes.  The top of the page is handeled in a different frame: the HeaderFrame.
+
+Header frame manages the top of the graph page.  It contains a button to go back, a title and displays links to the "also likes" pages.  A pack layout is also used here.
+
 \section{View Data}\label{viewdata}
+
+\lstinline{view_data.py}\lstinline{} contains the classes that represent the users, documents and views.  
+
+The Reader class represents a document.  Its fields simply contain its UUID and a list of the users views.  There is also a property to retrieve the users total time spent viewing documents.
+
+The Document class contains more.  In addition to storing the UUID and views, it contains many more functions.  
+
+\includegraphics[scale=0.75]{view_data.png}
+
+The \lstinline{get_views_by_key}\lstinline{}  function is used to retrieve a dictionary showing the number of views when a given property is a certain value.  The key parameter is a function that will get the value from the view.  There are other functions that use this function to show the views by country, continent and browser for easier access by defining the key in the function using lambda expressions.
+
+The \lstinline{also_likes}\lstinline{} function finds the documents which are also read by users who have viewed this document.  The function builds a dictionary for each document and tracks the number of views from unique users and the total read-time from all of the related users.  It also takes in a function \lstinline{sort}\lstinline{}, which is used to sort the items.
+
+The DocumentView class represents each view.  the document and visitor variables relate to the document being viewed and the reader viewing the document.  It also stores the time the document was viewed for, the country it was viewed from and the user agent.  The country and user agent are stored here instead of in the user as a user may view from multiple browsers or country.  With regards to the user agent, only the string is actually stored.  The browser family is found using a property which will first check if the string is in a global dictionary variable called \lstinline{parsed_user_agents}\lstinline{}.  If it is there it will use that, other-wise the string will be parsed using \lstinline{ua_parser}\lstinline{} and added to the dictionary.  This approach is faster than parsing each one individually which can take quite a long time for large data sets.  This way, any user agents which are the same as one already created are instantly accessed through the dictionary.  
+
+
 
 \chapter{Testing}
 
+To test my program I attempted to perform various tasks and ensure that they had the expected output.  While I did not perform any formal testing, I was continuously making sure that any new functionality I added worked as expected and did not break other parts of the program.
+
+While I was unable to make the program crash, there were areas that I could have improved on:
+\begin{itemize}
+\item{When an invalid document UUID is entered in the GUI, there is no error message.  While an exception is thrown and can be seen in the console, the GUI does not crash and will continue to function as expected.}
+\item{I also could have done some usability testing as my GUI was not very clear or usable.}
+\end{itemize}
+
+
 \chapter{Conclusions}
+I believe that my program was well designed and implemented with a high quality of code.  I met all the requirements and I was not able to detect any bugs.
+
+I was happy with my overall code design and quality.  I exploited the use of many advanced language features to make my program shorter and more reliable.  For example, the Document get views by key function was able to be reused for different purposes easily instead of duplicating the code to provide the slightly different functionality.
+
+I was also proud of my GUI as it embedded the histograms into the GUI and made use of multiple pages.  It also showed the also likes with links so a user can navigate through them.
+
+There are still some improvements I could have done to the project.
+
+Unit testing would have been a good thing for me to set-up so I could have a proper testing infrastructure to ensure that all parts of my program are working as expected.  Currently I have to manually test everything to make sure it works as expected.
+
+My code could also have been made more stable and reliable by including more try-except statements.  This would mean that my program would be more protected against bugs that I was unable to detect and would stop the program from completely crashing and I could handle how it should act should an error occur.
+
+I would also have liked to see if I could improve my code even more using advanced features of python that I did not use, such as decorators
 
 \bibliographystyle{unsrt}
 \bibliography{ref}
